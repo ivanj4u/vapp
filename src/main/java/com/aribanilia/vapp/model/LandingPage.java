@@ -7,20 +7,28 @@ package com.aribanilia.vapp.model;
 import com.aribanilia.vapp.entity.TblMenu;
 import com.aribanilia.vapp.entity.TblUser;
 import com.aribanilia.vapp.loader.MenuLoader;
+import com.aribanilia.vapp.service.UserServices;
+import com.aribanilia.vapp.view.LoginView;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+
+@UIScope
 @SpringView(name = LandingPage.VIEW_NAME)
 public class LandingPage extends CustomComponent implements View {
+    @Autowired private MenuLoader menuLoader;
+    @Autowired private UserServices servicesUser;
     private TblUser user;
     public static final String VIEW_NAME = "landing";
     private static final Logger logger = LoggerFactory.getLogger(LandingPage.class);
@@ -33,8 +41,8 @@ public class LandingPage extends CustomComponent implements View {
     private Label reportsBadge;
     private MenuBar.MenuItem settingsItem;
 
-    @Autowired
-    public LandingPage() {
+    @PostConstruct
+    public void init() {
         setPrimaryStyleName("valo-menu");
         setId(ID);
         setSizeUndefined();
@@ -100,7 +108,7 @@ public class LandingPage extends CustomComponent implements View {
             @Override
             public void menuSelected(final MenuBar.MenuItem selectedItem) {
                 VaadinSession.getCurrent().setAttribute(TblUser.class.getName(), null);
-                getUI().getNavigator().navigateTo(LoginPage.VIEW_NAME);
+                getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
             }
         });
         return settings;
@@ -125,10 +133,20 @@ public class LandingPage extends CustomComponent implements View {
     private Component buildMenuItems() {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
-        MenuLoader loader = (MenuLoader) VaadinSession.getCurrent().getAttribute(MenuLoader.class.getName());
         try {
-            for (final TblMenu view : loader.getAuthorizedMenu()) {
-                AbstractScreen screen = loader.getScreen(view.getMenuId());
+            TblUser user = VaadinSession.getCurrent().getAttribute(TblUser.class);
+            String sessionId = VaadinSession.getCurrent().getSession().getId();
+            logger.info("user : " + user);
+            logger.info("session id :" + sessionId);
+            if (!servicesUser.sessionCheck(user.getUsername(), sessionId)) {
+                Notification.show("Anda telah keluar", "Anda Telah Keluar/Login dari Komputer Lain!", Notification.Type.HUMANIZED_MESSAGE);
+                VaadinSession.getCurrent().close();
+                return null;
+            }
+            for (final TblMenu view : menuLoader.getAuthorizedMenu()) {
+
+
+                AbstractScreen screen = menuLoader.getScreen(view.getMenuId());
                 if (screen == null) {
                     logger.error("Screen Error : " + view.getMenuClass());
                     continue;

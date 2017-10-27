@@ -11,42 +11,40 @@ import com.aribanilia.vapp.entity.TblUserGroup;
 import com.aribanilia.vapp.model.AbstractScreen;
 import com.aribanilia.vapp.service.MenuServices;
 import com.aribanilia.vapp.service.UserServices;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Notification;
+import com.vaadin.spring.annotation.SpringComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SpringComponent
 public class MenuLoader {
-    private UserServices servicesUser;
-    private MenuServices servicesMenu;
-    private static Vector<TblMenu> v = new Vector<TblMenu>();
-    private Vector<TblMenu> vSessionedPerUser = new Vector<TblMenu>();
+    @Autowired private UserServices servicesUser;
+    @Autowired private MenuServices servicesMenu;
+    private static Vector<TblMenu> v = new Vector<>();
+    private Vector<TblMenu> vSessionedPerUser = new Vector<>();
     private ConcurrentHashMap<String, AbstractScreen> cacheClass = new ConcurrentHashMap<>();
 
-    @Autowired
-    public MenuLoader(UserServices servicesUser, MenuServices servicesMenu) {
-        this.servicesUser = servicesUser;
-        this.servicesMenu = servicesMenu;
+    private static final Logger logger = LoggerFactory.getLogger(MenuLoader.class);
+
+    @PostConstruct
+    public void load() {
+        logger.info("Initialize Loader : Menuloader");
+
         List<TblMenu> list = servicesMenu.getAllMenu();
         v.clear();
         v.addAll(list);
     }
+
 
     public AbstractScreen getScreen(String menuId) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         for (TblMenu menu : v) {
             if (menu.getMenuId().equals(menuId)) {
                 if (menu.getMenuClass() == null || menu.getHaveChild().equals("1"))
                     return null;
-                TblUser user = (TblUser) VaadinSession.getCurrent().getSession().getAttribute(TblUser.class.getName());
-                String sessionId = VaadinSession.getCurrent().getSession().getId();
-                if (!this.servicesUser.sessionCheck(user.getUsername(), sessionId)) {
-                    Notification.show("Anda telah keluar", "Anda Telah Keluar/Login dari Komputer Lain!", Notification.Type.HUMANIZED_MESSAGE);
-                    VaadinSession.getCurrent().close();
-                    return null;
-                }
-
                 AbstractScreen obj = cacheClass.get(menu.getMenuId());
                 if (obj != null)
                     return obj;

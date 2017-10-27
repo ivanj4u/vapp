@@ -2,38 +2,41 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vapp.model;
+package com.aribanilia.vapp.view;
 
 import com.aribanilia.vapp.entity.TblUser;
 import com.aribanilia.vapp.loader.MenuLoader;
+import com.aribanilia.vapp.model.LandingPage;
 import com.aribanilia.vapp.service.UserServices;
 import com.aribanilia.vapp.util.VConstants;
 import com.aribanilia.vapp.util.VaadinValidation;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringView(name = LoginPage.VIEW_NAME)
-public class LoginPage extends VerticalLayout implements View {
+import javax.annotation.PostConstruct;
 
-    private UserServices servicesUser;
+@UIScope
+@SpringView(name = LoginView.VIEW_NAME)
+public class LoginView extends VerticalLayout implements View {
+    @Autowired private UserServices servicesUser;
+    @Autowired private MenuLoader menuLoader;
 
     public static final String VIEW_NAME = "login";
-    private static final Logger logger = LoggerFactory.getLogger(LoginPage.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoginView.class);
 
-    @Autowired
-    public LoginPage(UserServices servicesUser) {
-        this.servicesUser = servicesUser;
+    @PostConstruct
+    private void init() {
         setSizeFull();
         setMargin(false);
         setSpacing(true);
@@ -52,7 +55,7 @@ public class LoginPage extends VerticalLayout implements View {
         notification.setStyleName("tray dark small closable login-help");
         notification.setPosition(Position.BOTTOM_CENTER);
         notification.setDelayMsec(20000);
-        notification.show(Page.getCurrent());
+        notification.show(UI.getCurrent().getPage());
     }
 
     private Component buildLoginForm() {
@@ -85,19 +88,16 @@ public class LoginPage extends VerticalLayout implements View {
                 TblUser user = servicesUser.login(txtUsername.getValue(), txtPassword.getValue());
                 if (user != null) {
                     if (VConstants.STATUS_USER.ACTIVE.equals(user.getStatus())) {
-                        VaadinSession.getCurrent().setAttribute(TblUser.class.getName(), user);
-                        MenuLoader loader = (MenuLoader) VaadinSession.getCurrent().getAttribute(MenuLoader.class.getName());
-                        loader.setAuthorizedMenu(user);
-                        LandingPage landing = new LandingPage();
-                        getUI().getNavigator().addView(LandingPage.VIEW_NAME, landing);
+                        VaadinSession.getCurrent().setAttribute(TblUser.class, user);
+                        menuLoader.setAuthorizedMenu(user);
                         getUI().getNavigator().navigateTo(LandingPage.VIEW_NAME);
                     } else {
                         logger.error("Status User : " + user.getUsername() + " tidak benar!");
                         Notification.show("Status User : " + user.getUsername() + " tidak benar!", Notification.Type.ERROR_MESSAGE);
                     }
                 } else {
-                    logger.error("User : " + user.getUsername() + " tidak ditemukan!");
-                    Notification.show("User : " + user.getUsername() + " tidak ditemukan!", Notification.Type.ERROR_MESSAGE);
+                    logger.error("User : " + txtUsername.getValue() + " tidak ditemukan!");
+                    Notification.show("User : " + txtUsername.getValue() + " tidak ditemukan!", Notification.Type.ERROR_MESSAGE);
                 }
             }
         });
@@ -121,12 +121,6 @@ public class LoginPage extends VerticalLayout implements View {
         welcome.addStyleName(ValoTheme.LABEL_COLORED);
         labels.addComponent(welcome);
 
-//        Label title = new Label("QuickTickets Dashboard");
-//        title.setSizeUndefined();
-//        title.addStyleName(ValoTheme.LABEL_H3);
-//        title.addStyleName(ValoTheme.LABEL_LIGHT);
-//        labels.addComponent(title);
         return labels;
     }
-
 }
