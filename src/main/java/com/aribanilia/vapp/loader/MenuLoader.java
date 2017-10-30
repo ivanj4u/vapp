@@ -8,8 +8,10 @@ import com.aribanilia.vapp.entity.TblMenu;
 import com.aribanilia.vapp.entity.TblPriviledge;
 import com.aribanilia.vapp.entity.TblUser;
 import com.aribanilia.vapp.entity.TblUserGroup;
-import com.aribanilia.vapp.model.AbstractScreen;
+import com.aribanilia.vapp.framework.AbstractScreen;
 import com.aribanilia.vapp.service.MenuServices;
+import com.aribanilia.vapp.service.PriviledgeServices;
+import com.aribanilia.vapp.service.UserGroupServices;
 import com.aribanilia.vapp.service.UserServices;
 import com.vaadin.spring.annotation.SpringComponent;
 import org.slf4j.Logger;
@@ -23,7 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @SpringComponent
 public class MenuLoader {
     @Autowired private UserServices servicesUser;
+    @Autowired private UserGroupServices servicesUserGroup;
+    @Autowired private PriviledgeServices servicesPriviledge;
     @Autowired private MenuServices servicesMenu;
+
     private static Vector<TblMenu> v = new Vector<>();
     private Vector<TblMenu> vSessionedPerUser = new Vector<>();
     private ConcurrentHashMap<String, AbstractScreen> cacheClass = new ConcurrentHashMap<>();
@@ -78,43 +83,48 @@ public class MenuLoader {
         vSessionedPerUser.removeAllElements();
         vSessionedPerUser.addAll(v);
         Vector<TblMenu> vTemp = new Vector<>();
+        try {
 
-        List<TblUserGroup> userGroups = servicesUser.getUserGroup(user.getUsername());
-        for (TblUserGroup userGroup : userGroups) {
-            List<TblPriviledge> priviledges = servicesUser.getGroupPriviledge(userGroup.getGroupId());
-            for (TblPriviledge p : priviledges) {
-                TblPriviledge privPrev = hSessionedMenuperUser.get(p.getMenuId());
-                if (privPrev != null) {
-                    if (privPrev.getIsAdd() == '0')
-                        privPrev.setIsAdd(p.getIsAdd());
-                    if (privPrev.getIsDelete() == '0')
-                        privPrev.setIsDelete(p.getIsDelete());
-                    if (privPrev.getIsUpdate() == '0')
-                        privPrev.setIsUpdate(p.getIsUpdate());
-                    if (privPrev.getIsView() == '0')
-                        privPrev.setIsView(p.getIsView());
-                } else {
-                    hSessionedMenuperUser.put(p.getMenuId(), p);
-                    TblMenu menu = servicesMenu.getMenu(p.getMenuId());
-                    if (menu != null && menu.getMenuClass() != null) {
+            List<TblUserGroup> userGroups = servicesUserGroup.getUserGroup(user.getUsername());
+            for (TblUserGroup userGroup : userGroups) {
+                List<TblPriviledge> priviledges = servicesPriviledge.getGroupPriviledge(userGroup.getGroupId());
+                for (TblPriviledge p : priviledges) {
+                    TblPriviledge privPrev = hSessionedMenuperUser.get(p.getMenuId());
+                    if (privPrev != null) {
+                        if (privPrev.getIsAdd() == '0')
+                            privPrev.setIsAdd(p.getIsAdd());
+                        if (privPrev.getIsDelete() == '0')
+                            privPrev.setIsDelete(p.getIsDelete());
+                        if (privPrev.getIsUpdate() == '0')
+                            privPrev.setIsUpdate(p.getIsUpdate());
+                        if (privPrev.getIsView() == '0')
+                            privPrev.setIsView(p.getIsView());
+                    } else {
+                        hSessionedMenuperUser.put(p.getMenuId(), p);
+                        TblMenu menu = servicesMenu.getMenu(p.getMenuId());
+                        if (menu != null && menu.getMenuClass() != null) {
 
-                        hSessionedMenuperUser2.put(menu.getMenuClass(), p);
+                            hSessionedMenuperUser2.put(menu.getMenuClass(), p);
+                        }
+                        vTemp.add(menu);
                     }
-                    vTemp.add(menu);
                 }
             }
-        }
-        for (TblMenu menu : v) {
-            boolean isShowed = false;
-            for (TblMenu menu_ : vTemp) {
-                if (menu_.getMenuId().equals(menu.getMenuId())) {
-                    isShowed = true;
-                    break;
+            for (TblMenu menu : v) {
+                boolean isShowed = false;
+                for (TblMenu menu_ : vTemp) {
+                    if (menu_.getMenuId().equals(menu.getMenuId())) {
+                        isShowed = true;
+                        break;
+                    }
+                }
+                if (!isShowed) {
+                    vSessionedPerUser.remove(menu);
                 }
             }
-            if (!isShowed) {
-                vSessionedPerUser.remove(menu);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 

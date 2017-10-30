@@ -6,9 +6,10 @@ package com.aribanilia.vapp.model;
 
 import com.aribanilia.vapp.entity.TblMenu;
 import com.aribanilia.vapp.entity.TblUser;
+import com.aribanilia.vapp.framework.AbstractScreen;
 import com.aribanilia.vapp.loader.MenuLoader;
+import com.aribanilia.vapp.service.SessionServices;
 import com.aribanilia.vapp.service.UserServices;
-import com.aribanilia.vapp.view.LoginView;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
@@ -29,6 +30,7 @@ import javax.annotation.PostConstruct;
 public class LandingPage extends CustomComponent implements View {
     @Autowired private MenuLoader menuLoader;
     @Autowired private UserServices servicesUser;
+    @Autowired private SessionServices servicesSession;
     private TblUser user;
     public static final String VIEW_NAME = "landing";
     private static final Logger logger = LoggerFactory.getLogger(LandingPage.class);
@@ -43,11 +45,13 @@ public class LandingPage extends CustomComponent implements View {
 
     @PostConstruct
     public void init() {
-        setPrimaryStyleName("valo-menu");
-        setId(ID);
-        setSizeUndefined();
+        if (getCurrentUser() != null) {
+            setPrimaryStyleName("valo-menu");
+            setId(ID);
+            setSizeUndefined();
 
-        setCompositionRoot(buildContent());
+            setCompositionRoot(buildContent());
+        }
     }
 
     private Component buildContent() {
@@ -79,8 +83,8 @@ public class LandingPage extends CustomComponent implements View {
     }
 
     private TblUser getCurrentUser() {
-        return (TblUser) VaadinSession.getCurrent()
-                .getAttribute(TblUser.class.getName());
+        return VaadinSession.getCurrent()
+                .getAttribute(TblUser.class);
     }
 
     private Component buildUserMenu() {
@@ -89,27 +93,18 @@ public class LandingPage extends CustomComponent implements View {
         final TblUser user = getCurrentUser();
         settingsItem = settings.addItem("",
                 new ThemeResource("img/profile-pic-300px.jpg"), null);
-        settingsItem.addItem("Edit Profile", new MenuBar.Command() {
-            @Override
-            public void menuSelected(final MenuBar.MenuItem selectedItem) {
+        settingsItem.addItem("Edit Profile", menuItem ->  {
 //                ProfilePreferencesWindow.open(user, false);
-                Notification.show("Edit Profile Clicked");
-            }
+            Notification.show("Edit Profile Clicked");
         });
-        settingsItem.addItem("Preferences", new MenuBar.Command() {
-            @Override
-            public void menuSelected(final MenuBar.MenuItem selectedItem) {
+        settingsItem.addItem("Preferences", menuItem ->  {
 //                ProfilePreferencesWindow.open(user, true);
-                Notification.show("Preferences Clicked");
-            }
+            Notification.show("Preferences Clicked");
         });
         settingsItem.addSeparator();
-        settingsItem.addItem("Sign Out", new MenuBar.Command() {
-            @Override
-            public void menuSelected(final MenuBar.MenuItem selectedItem) {
-                VaadinSession.getCurrent().setAttribute(TblUser.class.getName(), null);
-                getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
-            }
+        settingsItem.addItem("Sign Out", menuItem ->  {
+            VaadinSession.getCurrent().setAttribute(TblUser.class.getName(), null);
+            getUI().getNavigator().navigateTo(LoginPage.VIEW_NAME);
         });
         return settings;
     }
@@ -136,22 +131,18 @@ public class LandingPage extends CustomComponent implements View {
         try {
             TblUser user = VaadinSession.getCurrent().getAttribute(TblUser.class);
             String sessionId = VaadinSession.getCurrent().getSession().getId();
-            logger.info("user : " + user);
-            logger.info("session id :" + sessionId);
-            if (!servicesUser.sessionCheck(user.getUsername(), sessionId)) {
+            if (!servicesSession.sessionCheck(user.getUsername(), sessionId)) {
                 Notification.show("Anda telah keluar", "Anda Telah Keluar/Login dari Komputer Lain!", Notification.Type.HUMANIZED_MESSAGE);
                 VaadinSession.getCurrent().close();
                 return null;
             }
             for (final TblMenu view : menuLoader.getAuthorizedMenu()) {
-
-
                 AbstractScreen screen = menuLoader.getScreen(view.getMenuId());
                 if (screen == null) {
                     logger.error("Screen Error : " + view.getMenuClass());
                     continue;
                 }
-                getUI().getNavigator().addView(view.getMenuId(), screen);
+                UI.getCurrent().getNavigator().addView(view.getMenuId(), screen);
                 Component menuItemComponent = new ValoMenuItemButton(view);
                 menuItemsLayout.addComponent(menuItemComponent);
             }
@@ -181,10 +172,7 @@ public class LandingPage extends CustomComponent implements View {
     }
 
     public final class ValoMenuItemButton extends Button {
-        private final TblMenu view;
-
         public ValoMenuItemButton(final TblMenu view) {
-            this.view = view;
             setPrimaryStyleName("valo-menu-item");
             setCaption(view.getMenuName().substring(0, 1).toUpperCase()
                     + view.getMenuName().substring(1));

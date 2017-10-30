@@ -2,17 +2,17 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vapp.model;
+package com.aribanilia.vapp.framework;
 
 import com.aribanilia.vapp.entity.TblUser;
-import com.aribanilia.vapp.view.LoginView;
+import com.aribanilia.vapp.model.LandingPage;
+import com.aribanilia.vapp.model.LoginPage;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.spring.navigator.SpringNavigator;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
@@ -26,23 +26,25 @@ public class VaadinUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
+        Responsive.makeResponsive(this);
+        addStyleName(ValoTheme.UI_WITH_MENU);
+
         // Initialize Navigator
         Navigator navigator = new Navigator(this, this);
         navigator.addProvider(viewProvider);
+        navigator.setErrorView(LoginPage.class);
 
-
-        Responsive.makeResponsive(this);
         updateContent();
     }
 
     private void updateContent() {
         if (getSession().getAttribute(TblUser.class.getName()) != null) {
             // Authenticated user
-            removeStyleName("loginview");
-            getNavigator().navigateTo(getNavigator().getState());
+//            removeStyleName("loginview");
+            getNavigator().navigateTo(LandingPage.VIEW_NAME);
         } else {
-            getNavigator().navigateTo(LoginView.VIEW_NAME);
-            addStyleName("loginview");
+            getNavigator().navigateTo(LoginPage.VIEW_NAME);
+//            addStyleName("loginview");
         }
     }
 }

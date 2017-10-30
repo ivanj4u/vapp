@@ -2,19 +2,22 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vapp.model;
+package com.aribanilia.vapp.framework;
 
 import com.aribanilia.vapp.loader.MenuLoader;
+import com.aribanilia.vapp.model.PriviledgeModel;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Responsive;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Panel;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UIScope
 @SpringView
 public abstract class AbstractScreen extends Panel implements PriviledgeModel, View {
+
+    @Autowired private MenuLoader menuLoader;
 
     protected boolean isInit = false;
     protected int mode = -1;
@@ -95,33 +98,29 @@ public abstract class AbstractScreen extends Panel implements PriviledgeModel, V
 
     @Override
     public boolean isAuthorizedToView() {
-        MenuLoader loader = (MenuLoader) VaadinSession.getCurrent().getAttribute(MenuLoader.class.getName());
-        return loader.getPriviledge(getClass().getName()) != null
-                ? loader.getPriviledge(getClass().getName()).getIsView() == '1' : false;
+        return menuLoader.getPriviledge(getClass().getName()) != null
+                ? menuLoader.getPriviledge(getClass().getName()).getIsView() == '1' : false;
     }
 
     @Override
     public boolean isAuthorizedToUpdate() {
         boolean b = false;
-        MenuLoader loader = (MenuLoader) VaadinSession.getCurrent().getAttribute(MenuLoader.class.getName());
-        if (loader.getPriviledge(getClass().getName()) != null) {
-            b = loader.getPriviledge(getClass().getName()).getIsUpdate() == '1';
+        if (menuLoader.getPriviledge(getClass().getName()) != null) {
+            b = menuLoader.getPriviledge(getClass().getName()).getIsUpdate() == '1';
         }
         return b;
     }
 
     @Override
     public boolean isAuthorizedToDelete() {
-        MenuLoader loader = (MenuLoader) VaadinSession.getCurrent().getAttribute(MenuLoader.class.getName());
-        return loader.getPriviledge(getClass().getName()) != null
-                ? loader.getPriviledge(getClass().getName()).getIsDelete() == '1' : false;
+        return menuLoader.getPriviledge(getClass().getName()) != null
+                ? menuLoader.getPriviledge(getClass().getName()).getIsDelete() == '1' : false;
     }
 
     @Override
     public boolean isAuthorizedToAdd() {
-        MenuLoader loader = (MenuLoader) VaadinSession.getCurrent().getAttribute(MenuLoader.class.getName());
-        return loader.getPriviledge(getClass().getName()) == null
-                || (loader.getPriviledge(getClass().getName()) != null && loader.getPriviledge(getClass().getName())
+        return menuLoader.getPriviledge(getClass().getName()) == null
+                || (menuLoader.getPriviledge(getClass().getName()) != null && menuLoader.getPriviledge(getClass().getName())
                 .getIsAdd() == '1');
     }
 }
