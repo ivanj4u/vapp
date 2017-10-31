@@ -93,7 +93,7 @@ public class LandingPage extends CustomComponent implements View {
         settings.addStyleName("user-menu");
         final TblUser user = getCurrentUser();
         settingsItem = settings.addItem("",
-                new ThemeResource("img/profile-pic-300px.jpg"), null);
+                new ThemeResource("img/logo.jpg"), null);
         settingsItem.addItem("Edit Profile", menuItem ->  {
 //                ProfilePreferencesWindow.open(user, false);
             Notification.show("Edit Profile Clicked");
