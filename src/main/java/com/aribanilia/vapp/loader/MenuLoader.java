@@ -37,8 +37,6 @@ public class MenuLoader {
 
     @PostConstruct
     public void load() {
-        logger.info("Initialize Loader : Menuloader");
-
         List<TblMenu> list = servicesMenu.getAllMenu();
         v.clear();
         v.addAll(list);
@@ -48,8 +46,6 @@ public class MenuLoader {
     public AbstractScreen getScreen(String menuId) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         for (TblMenu menu : v) {
             if (menu.getMenuId().equals(menuId)) {
-                if (menu.getMenuClass() == null || menu.getHaveChild().equals("1"))
-                    return null;
                 AbstractScreen obj = cacheClass.get(menu.getMenuId());
                 if (obj != null)
                     return obj;

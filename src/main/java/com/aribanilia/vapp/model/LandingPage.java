@@ -67,6 +67,7 @@ public class LandingPage extends CustomComponent implements View {
         menuContent.addComponent(buildUserMenu());
         menuContent.addComponent(buildToggleButton());
         menuContent.addComponent(buildMenuItems());
+//        menuContent.addComponent(buildMenu());
 
         return menuContent;
     }
@@ -129,11 +130,7 @@ public class LandingPage extends CustomComponent implements View {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
         try {
-            TblUser user = VaadinSession.getCurrent().getAttribute(TblUser.class);
-            String sessionId = VaadinSession.getCurrent().getSession().getId();
-            if (!servicesSession.sessionCheck(user.getUsername(), sessionId)) {
-                Notification.show("Anda telah keluar", "Anda Telah Keluar/Login dari Komputer Lain!", Notification.Type.HUMANIZED_MESSAGE);
-                VaadinSession.getCurrent().close();
+            if (!validateUserSession()) {
                 return null;
             }
             for (final TblMenu view : menuLoader.getAuthorizedMenu()) {
@@ -151,7 +148,17 @@ public class LandingPage extends CustomComponent implements View {
             logger.error(e.getMessage());
         }
         return menuItemsLayout;
+    }
 
+    private boolean validateUserSession() throws Exception {
+        TblUser user = VaadinSession.getCurrent().getAttribute(TblUser.class);
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
+        if (!servicesSession.sessionCheck(user.getUsername(), sessionId)) {
+            Notification.show("Anda telah keluar", "Anda Telah Keluar/Login dari Komputer Lain!", Notification.Type.HUMANIZED_MESSAGE);
+            VaadinSession.getCurrent().close();
+            return false;
+        }
+        return true;
     }
 
     private Component buildBadgeWrapper(final Component menuItemButton,
@@ -173,14 +180,13 @@ public class LandingPage extends CustomComponent implements View {
 
     public final class ValoMenuItemButton extends Button {
         public ValoMenuItemButton(final TblMenu view) {
-            setPrimaryStyleName("valo-menu-item");
+            setPrimaryStyleName(ValoTheme.MENU_ITEM);
             setCaption(view.getMenuName().substring(0, 1).toUpperCase()
                     + view.getMenuName().substring(1));
             addClickListener(event -> {
                 UI.getCurrent().getNavigator()
                         .navigateTo(view.getMenuId());
             });
-
         }
 
     }

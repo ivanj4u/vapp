@@ -8,13 +8,11 @@ import com.aribanilia.vapp.loader.MenuLoader;
 import com.aribanilia.vapp.model.PriviledgeModel;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Responsive;
-import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Panel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UIScope
-@SpringView
 public abstract class AbstractScreen extends Panel implements PriviledgeModel, View {
 
     @Autowired private MenuLoader menuLoader;
