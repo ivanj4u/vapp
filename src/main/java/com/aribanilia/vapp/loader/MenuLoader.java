@@ -13,6 +13,7 @@ import com.aribanilia.vapp.service.MenuServices;
 import com.aribanilia.vapp.service.PriviledgeServices;
 import com.aribanilia.vapp.service.UserGroupServices;
 import com.aribanilia.vapp.service.UserServices;
+import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class MenuLoader {
     private static Vector<TblMenu> v = new Vector<>();
     private Vector<TblMenu> vSessionedPerUser = new Vector<>();
     private ConcurrentHashMap<String, AbstractScreen> cacheClass = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Class<? extends View>> cacheView = new ConcurrentHashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(MenuLoader.class);
 
@@ -42,6 +44,19 @@ public class MenuLoader {
         v.addAll(list);
     }
 
+    public Class<? extends View> getView(TblMenu menu) {
+        try {
+            Class<? extends View> view = cacheView.get(menu.getMenuId());
+            if (view != null)
+                return view;
+            view = (Class<? extends View>) Class.forName(menu.getMenuName()).newInstance();
+            cacheView.put(menu.getMenuId(), view);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
 
     public AbstractScreen getScreen(String menuId) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         for (TblMenu menu : v) {

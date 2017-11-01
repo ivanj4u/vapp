@@ -5,8 +5,6 @@
 package com.aribanilia.vapp.framework;
 
 import com.aribanilia.vapp.entity.TblUser;
-import com.aribanilia.vapp.model.LandingPage;
-import com.aribanilia.vapp.model.LoginPage;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.navigator.Navigator;
@@ -25,14 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Theme(ValoTheme.THEME_NAME)
 @Title("Vaadin Spring")
 public class VaadinUI extends UI {
-    private final SpringViewProvider viewProvider;
+    @Autowired private SpringViewProvider viewProvider;
 
     private static final Logger logger = LoggerFactory.getLogger(VaadinUI.class);
-
-    @Autowired
-    public VaadinUI(SpringViewProvider viewProvider) {
-        this.viewProvider = viewProvider;
-    }
 
     @Override
     protected void init(VaadinRequest request) {
@@ -54,12 +47,9 @@ public class VaadinUI extends UI {
 
     private void updateContent() {
         if (getSession().getAttribute(TblUser.class.getName()) != null) {
-            // Authenticated user
-//            removeStyleName("loginview");
-            getNavigator().navigateTo(LandingPage.VIEW_NAME);
+            getNavigator().navigateTo(MainPage.VIEW_NAME);
         } else {
             getNavigator().navigateTo(LoginPage.VIEW_NAME);
-//            addStyleName("loginview");
         }
     }
 }

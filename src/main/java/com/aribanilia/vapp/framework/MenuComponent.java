@@ -2,21 +2,19 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vapp.model;
+package com.aribanilia.vapp.framework;
 
 import com.aribanilia.vapp.entity.TblMenu;
 import com.aribanilia.vapp.entity.TblUser;
-import com.aribanilia.vapp.framework.AbstractScreen;
 import com.aribanilia.vapp.loader.MenuLoader;
 import com.aribanilia.vapp.service.SessionServices;
-import com.aribanilia.vapp.service.UserServices;
-import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
@@ -25,23 +23,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
-@UIScope
-@SpringView(name = LandingPage.VIEW_NAME)
-public class LandingPage extends CustomComponent implements View {
-    @Autowired private MenuLoader menuLoader;
-    @Autowired private UserServices servicesUser;
-    @Autowired private SessionServices servicesSession;
-    private TblUser user;
-    public static final String VIEW_NAME = "landing";
-    private static final Logger logger = LoggerFactory.getLogger(LandingPage.class);
 
-    public static final String ID = "dashboard-menu";
-    public static final String REPORTS_BADGE_ID = "dashboard-menu-reports-badge";
-    public static final String NOTIFICATIONS_BADGE_ID = "dashboard-menu-notifications-badge";
-    private static final String STYLE_VISIBLE = "valo-menu-visible";
-    private Label notificationsBadge;
-    private Label reportsBadge;
+@SpringComponent
+@UIScope
+public class MenuComponent extends CustomComponent {
+    @Autowired private MenuLoader menuLoader;
+    @Autowired private SessionServices servicesSession;
+    @Autowired private SpringViewProvider viewProvider;
+
     private MenuBar.MenuItem settingsItem;
+    private MenuNavigator menuNavigator;
+
+    public static final String ID = "menu";
+    private static final String STYLE_VISIBLE = "valo-menu-visible";
+    private static final Logger logger = LoggerFactory.getLogger(MenuComponent.class);
 
     @PostConstruct
     public void init() {
@@ -66,8 +61,7 @@ public class LandingPage extends CustomComponent implements View {
         menuContent.addComponent(buildTitle());
         menuContent.addComponent(buildUserMenu());
         menuContent.addComponent(buildToggleButton());
-        menuContent.addComponent(buildMenuItems());
-//        menuContent.addComponent(buildMenu());
+        menuContent.addComponent(buildMenuItem());
 
         return menuContent;
     }
@@ -126,7 +120,7 @@ public class LandingPage extends CustomComponent implements View {
         return valoMenuToggleButton;
     }
 
-    private Component buildMenuItems() {
+    private Component buildMenuItem() {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
         try {
@@ -139,8 +133,13 @@ public class LandingPage extends CustomComponent implements View {
                     logger.error("Screen Error : " + view.getMenuClass());
                     continue;
                 }
-                UI.getCurrent().getNavigator().addView(view.getMenuId(), screen);
-                Component menuItemComponent = new ValoMenuItemButton(view);
+                Button menuItemComponent = new Button();
+                menuItemComponent.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+                menuItemComponent.setCaption(view.getMenuName().substring(0, 1).toUpperCase()
+                        + view.getMenuName().substring(1));
+                menuItemComponent.addClickListener(event -> {
+                    getUI().getNavigator().navigateTo(view.getMenuId());
+                });
                 menuItemsLayout.addComponent(menuItemComponent);
             }
         } catch (Exception e) {
@@ -161,33 +160,9 @@ public class LandingPage extends CustomComponent implements View {
         return true;
     }
 
-    private Component buildBadgeWrapper(final Component menuItemButton,
-                                        final Component badgeLabel) {
-        CssLayout dashboardWrapper = new CssLayout(menuItemButton);
-        dashboardWrapper.addStyleName("badgewrapper");
-        dashboardWrapper.addStyleName(ValoTheme.MENU_ITEM);
-        badgeLabel.addStyleName(ValoTheme.MENU_BADGE);
-        badgeLabel.setWidthUndefined();
-        badgeLabel.setVisible(false);
-        dashboardWrapper.addComponent(badgeLabel);
-        return dashboardWrapper;
-    }
-
     @Override
     public void attach() {
         super.attach();
     }
 
-    public final class ValoMenuItemButton extends Button {
-        public ValoMenuItemButton(final TblMenu view) {
-            setPrimaryStyleName(ValoTheme.MENU_ITEM);
-            setCaption(view.getMenuName().substring(0, 1).toUpperCase()
-                    + view.getMenuName().substring(1));
-            addClickListener(event -> {
-                UI.getCurrent().getNavigator()
-                        .navigateTo(view.getMenuId());
-            });
-        }
-
-    }
 }

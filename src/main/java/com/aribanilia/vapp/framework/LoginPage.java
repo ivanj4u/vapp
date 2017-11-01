@@ -2,7 +2,7 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vapp.model;
+package com.aribanilia.vapp.framework;
 
 import com.aribanilia.vapp.entity.TblUser;
 import com.aribanilia.vapp.loader.MenuLoader;
@@ -124,7 +124,7 @@ public class LoginPage extends VerticalLayout implements View {
                         VaadinSession.getCurrent().setAttribute(TblUser.class, user);
                         // Reset Field
                         resetField();
-                        getUI().getNavigator().navigateTo(LandingPage.VIEW_NAME);
+                        UI.getCurrent().getNavigator().navigateTo(MainPage.VIEW_NAME);
                     } else {
                         logger.error("Status User : " + user.getUsername() + " tidak benar!");
                         showFailedLogin("Status User : " + user.getUsername() + " tidak benar!");

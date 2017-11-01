@@ -2,9 +2,9 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vapp.model;
+package com.aribanilia.vapp.framework;
 
-public interface PriviledgeModel {
+public interface Priviledge {
 
     int MODE_NEW = 0;
     int MODE_UPDATE = 1;
