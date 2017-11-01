@@ -12,7 +12,6 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.*;
@@ -21,30 +20,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 
-
-@SpringComponent
 @UIScope
 public class MenuComponent extends CustomComponent {
-    @Autowired private MenuLoader menuLoader;
-    @Autowired private SessionServices servicesSession;
-    @Autowired private SpringViewProvider viewProvider;
-
-    private MenuBar.MenuItem settingsItem;
     private MenuNavigator menuNavigator;
+    private MenuLoader menuLoader;
+    private SessionServices servicesSession;
+    private MenuBar.MenuItem settingsItem;
 
     public static final String ID = "menu";
     private static final String STYLE_VISIBLE = "valo-menu-visible";
     private static final Logger logger = LoggerFactory.getLogger(MenuComponent.class);
 
-    @PostConstruct
-    public void init() {
+    @Autowired
+    public MenuComponent(MenuLoader menuLoader, SessionServices servicesSession, final ComponentContainer content) {
+        this.menuLoader = menuLoader;
+        this.servicesSession = servicesSession;
+
         if (getCurrentUser() != null) {
             setPrimaryStyleName("valo-menu");
             setId(ID);
             setSizeUndefined();
 
+            this.menuNavigator = new MenuNavigator(menuLoader, content);
             setCompositionRoot(buildContent());
         }
     }
@@ -138,7 +136,7 @@ public class MenuComponent extends CustomComponent {
                 menuItemComponent.setCaption(view.getMenuName().substring(0, 1).toUpperCase()
                         + view.getMenuName().substring(1));
                 menuItemComponent.addClickListener(event -> {
-                    getUI().getNavigator().navigateTo(view.getMenuId());
+                    menuNavigator.navigateTo(view.getMenuId());
                 });
                 menuItemsLayout.addComponent(menuItemComponent);
             }

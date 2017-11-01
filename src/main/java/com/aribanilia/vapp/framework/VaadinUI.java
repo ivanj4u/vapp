@@ -38,9 +38,10 @@ public class VaadinUI extends UI {
         addStyleName(ValoTheme.UI_WITH_MENU);
 
         // Initialize Navigator
-        Navigator navigator = new Navigator(this, this);
+        Navigator navigator = new Navigator(this,this);
         navigator.addProvider(viewProvider);
         navigator.setErrorView(LoginPage.class);
+        setNavigator(navigator);
 
         updateContent();
     }

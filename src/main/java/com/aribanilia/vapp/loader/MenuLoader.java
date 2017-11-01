@@ -49,7 +49,8 @@ public class MenuLoader {
             Class<? extends View> view = cacheView.get(menu.getMenuId());
             if (view != null)
                 return view;
-            view = (Class<? extends View>) Class.forName(menu.getMenuName()).newInstance();
+            AbstractScreen screen = (AbstractScreen) Class.forName(menu.getMenuClass()).newInstance();
+            view = screen.getClass();
             cacheView.put(menu.getMenuId(), view);
         } catch (Exception e) {
             e.printStackTrace();
