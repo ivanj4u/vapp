@@ -11,7 +11,7 @@ import com.vaadin.ui.Panel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UIScope
-public abstract class AbstractScreen extends Panel implements Priviledge {
+public abstract class AbstractScreen extends Panel implements TransactionModel {
 
     @Autowired private MenuLoader menuLoader;
 

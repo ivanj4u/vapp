@@ -4,7 +4,7 @@
 
 package com.aribanilia.vapp.framework;
 
-public interface Priviledge {
+public interface TransactionModel {
 
     int MODE_NEW = 0;
     int MODE_UPDATE = 1;

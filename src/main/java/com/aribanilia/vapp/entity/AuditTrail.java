@@ -4,10 +4,7 @@
 
 package com.aribanilia.vapp.entity;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,6 +21,7 @@ public class AuditTrail implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "update_date", length = 29)
     private Date updateDate;
+    @Version
     @Column(name = "versi", length = 20)
     private Long versi;
 
@@ -71,15 +69,4 @@ public class AuditTrail implements Serializable {
         this.versi = versi;
     }
 
-    public void setAuditCreate(String createBy) {
-        setCreateBy(createBy);
-        setCreateDate(new Date());
-        setVersi(System.currentTimeMillis());
-    }
-
-    public void setAuditUpdate(String updateBy) {
-        setUpdateBy(updateBy);
-        setUpdateDate(new Date());
-        setVersi(System.currentTimeMillis());
-    }
 }

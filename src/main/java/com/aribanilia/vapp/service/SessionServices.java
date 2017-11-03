@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 @Transactional
 public class SessionServices {
@@ -28,9 +30,11 @@ public class SessionServices {
                 pojo = new TblSession();
                 pojo.setUsername(username);
                 // Audit Trail
-                pojo.setAuditCreate(username);
+                pojo.setCreateBy(username);
+                pojo.setCreateDate(new Date());
             } else {
-                pojo.setAuditUpdate(username);
+                pojo.setUpdateBy(username);
+                pojo.setUpdateDate(new Date());
             }
             pojo.setSessionId(sessionId);
             pojo.setIp(ip);
