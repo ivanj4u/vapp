@@ -28,7 +28,6 @@ public class TblPriviledge extends AuditTrail implements Serializable {
     private char isDelete;
 
     public TblPriviledge() {
-
     }
 
     public long getGroupId() {
