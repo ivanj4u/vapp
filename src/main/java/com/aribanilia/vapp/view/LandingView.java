@@ -4,18 +4,28 @@
 
 package com.aribanilia.vapp.view;
 
-import com.vaadin.navigator.View;
-import com.vaadin.spring.annotation.SpringView;
+import com.aribanilia.vapp.framework.AbstractScreen;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
 
-import javax.annotation.PostConstruct;
+public class LandingView extends AbstractScreen {
 
-@SpringView
-public class LandingView extends VerticalLayout implements View {
+    @Override
+    protected void initComponents() {
+        setContent(new Label("This is Landing View"));
+    }
 
-    @PostConstruct
-    public void init() {
-        addComponent(new Label("Selamat Datang di Aplikasi Vaadin"));
+    @Override
+    public void setModeNew() {
+
+    }
+
+    @Override
+    public void setModeUpdate() {
+
+    }
+
+    @Override
+    public void setModeView() {
+
     }
 }

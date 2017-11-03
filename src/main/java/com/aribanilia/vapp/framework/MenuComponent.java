@@ -13,7 +13,6 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @UIScope
 public class MenuComponent extends CustomComponent {
-    private MenuNavigator menuNavigator;
     private MenuLoader menuLoader;
     private SessionServices servicesSession;
     private MenuBar.MenuItem settingsItem;
@@ -33,7 +31,7 @@ public class MenuComponent extends CustomComponent {
     private static final Logger logger = LoggerFactory.getLogger(MenuComponent.class);
 
     @Autowired
-    public MenuComponent(MenuLoader menuLoader, SessionServices servicesSession, final ComponentContainer content) {
+    public MenuComponent(MenuLoader menuLoader, SessionServices servicesSession) {
         this.menuLoader = menuLoader;
         this.servicesSession = servicesSession;
 
@@ -42,7 +40,6 @@ public class MenuComponent extends CustomComponent {
             setId(ID);
             setSizeUndefined();
 
-            this.menuNavigator = new MenuNavigator(menuLoader, content);
             setCompositionRoot(buildContent());
         }
     }
@@ -136,7 +133,7 @@ public class MenuComponent extends CustomComponent {
                 menuItemComponent.setCaption(view.getMenuName().substring(0, 1).toUpperCase()
                         + view.getMenuName().substring(1));
                 menuItemComponent.addClickListener(event -> {
-                    menuNavigator.navigateTo(view.getMenuId());
+                    getUI().getNavigator().navigateTo(MainPage.VIEW_NAME + "/" + view.getMenuId());
                 });
                 menuItemsLayout.addComponent(menuItemComponent);
             }

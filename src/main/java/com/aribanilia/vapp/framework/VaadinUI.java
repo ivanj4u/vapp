@@ -24,11 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Title("Vaadin Spring")
 public class VaadinUI extends UI {
     @Autowired private SpringViewProvider viewProvider;
+    private MainPage mainPage;
 
     private static final Logger logger = LoggerFactory.getLogger(VaadinUI.class);
 
     @Override
     protected void init(VaadinRequest request) {
+        this.mainPage = new MainPage();
+
         setErrorHandler(event -> {
             Throwable t = DefaultErrorHandler.findRelevantThrowable(event.getThrowable());
             logger.error("Error during request", t);
@@ -48,7 +51,7 @@ public class VaadinUI extends UI {
 
     private void updateContent() {
         if (getSession().getAttribute(TblUser.class.getName()) != null) {
-            getNavigator().navigateTo(MainPage.VIEW_NAME);
+            setContent(mainPage);
         } else {
             getNavigator().navigateTo(LoginPage.VIEW_NAME);
         }

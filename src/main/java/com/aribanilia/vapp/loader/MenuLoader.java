@@ -44,21 +44,6 @@ public class MenuLoader {
         v.addAll(list);
     }
 
-    public Class<? extends View> getView(TblMenu menu) {
-        try {
-            Class<? extends View> view = cacheView.get(menu.getMenuId());
-            if (view != null)
-                return view;
-            AbstractScreen screen = (AbstractScreen) Class.forName(menu.getMenuClass()).newInstance();
-            view = screen.getClass();
-            cacheView.put(menu.getMenuId(), view);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-        }
-        return null;
-    }
-
     public AbstractScreen getScreen(String menuId) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         for (TblMenu menu : v) {
             if (menu.getMenuId().equals(menuId)) {

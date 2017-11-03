@@ -5,14 +5,13 @@
 package com.aribanilia.vapp.framework;
 
 import com.aribanilia.vapp.loader.MenuLoader;
-import com.vaadin.navigator.View;
 import com.vaadin.server.Responsive;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Panel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UIScope
-public abstract class AbstractScreen extends Panel implements Priviledge, View {
+public abstract class AbstractScreen extends Panel implements Priviledge {
 
     @Autowired private MenuLoader menuLoader;
 

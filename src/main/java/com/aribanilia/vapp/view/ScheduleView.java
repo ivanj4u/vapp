@@ -5,15 +5,12 @@
 package com.aribanilia.vapp.view;
 
 import com.aribanilia.vapp.framework.AbstractScreen;
-import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.Label;
 
-@SpringView(name = ScheduleView.MENU_ID)
 public class ScheduleView extends AbstractScreen {
-    public static final String MENU_ID = "400";
-
     @Override
     protected void initComponents() {
-
+        setContent(new Label("This is Schedule View"));
     }
 
     @Override
