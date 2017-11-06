@@ -10,6 +10,8 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Panel;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+
 @UIScope
 public abstract class AbstractScreen extends Panel implements TransactionModel {
 
@@ -31,6 +33,7 @@ public abstract class AbstractScreen extends Panel implements TransactionModel {
         this.param = param;
     }
 
+    @PostConstruct
     public void show() {
         if (isInit) {
             onShow();

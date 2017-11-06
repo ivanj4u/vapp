@@ -13,4 +13,8 @@ public class Constants {
         public String ACTIVE = "1";
         public String BLOKIR = "2";
     }
+
+    public interface MESSAGE {
+        public String WARN_MANDATORY = "Mohon mengisi field terlebih dahulu!";
+    }
 }

@@ -5,9 +5,14 @@
 package com.aribanilia.vapp.view;
 
 import com.aribanilia.vapp.framework.AbstractScreen;
+import com.vaadin.navigator.View;
+import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Label;
 
-public class SalesView extends AbstractScreen {
+@UIScope
+@SpringView
+public class SalesView extends AbstractScreen implements View {
 
     @Override
     protected void initComponents() {

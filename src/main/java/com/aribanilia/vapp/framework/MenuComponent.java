@@ -7,7 +7,6 @@ package com.aribanilia.vapp.framework;
 import com.aribanilia.vapp.entity.TblMenu;
 import com.aribanilia.vapp.entity.TblUser;
 import com.aribanilia.vapp.loader.MenuLoader;
-import com.aribanilia.vapp.service.SessionServices;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 public class MenuComponent extends CustomComponent {
     private MenuLoader menuLoader;
-    private SessionServices servicesSession;
     private MenuBar.MenuItem settingsItem;
 
     public static final String ID = "menu";
@@ -31,9 +29,8 @@ public class MenuComponent extends CustomComponent {
     private static final Logger logger = LoggerFactory.getLogger(MenuComponent.class);
 
     @Autowired
-    public MenuComponent(MenuLoader menuLoader, SessionServices servicesSession) {
+    public MenuComponent(MenuLoader menuLoader) {
         this.menuLoader = menuLoader;
-        this.servicesSession = servicesSession;
 
         if (getCurrentUser() != null) {
             setPrimaryStyleName("valo-menu");
@@ -119,9 +116,6 @@ public class MenuComponent extends CustomComponent {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
         try {
-            if (!validateUserSession()) {
-                return null;
-            }
             for (final TblMenu view : menuLoader.getAuthorizedMenu()) {
                 AbstractScreen screen = menuLoader.getScreen(view.getMenuId());
                 if (screen == null) {
@@ -142,17 +136,6 @@ public class MenuComponent extends CustomComponent {
             logger.error(e.getMessage());
         }
         return menuItemsLayout;
-    }
-
-    private boolean validateUserSession() throws Exception {
-        TblUser user = VaadinSession.getCurrent().getAttribute(TblUser.class);
-        String sessionId = VaadinSession.getCurrent().getSession().getId();
-        if (!servicesSession.sessionCheck(user.getUsername(), sessionId)) {
-            Notification.show("Anda telah keluar", "Anda Telah Keluar/Login dari Komputer Lain!", Notification.Type.HUMANIZED_MESSAGE);
-            VaadinSession.getCurrent().close();
-            return false;
-        }
-        return true;
     }
 
     @Override

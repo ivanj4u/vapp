@@ -10,4 +10,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface UserDao extends CrudRepository<TblUser, String> {
 
     TblUser findByUsernameAndPassword(String username, String password);
+
 }
