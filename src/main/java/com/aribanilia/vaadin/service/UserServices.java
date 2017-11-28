@@ -7,22 +7,54 @@ package com.aribanilia.vaadin.service;
 import com.aribanilia.vaadin.dao.UserDao;
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.util.ValidationHelper;
-import com.vaadin.server.VaadinSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
 @Transactional
-public class UserServices {
+public class UserServices extends AuditTrailServices {
     @Autowired private UserDao daoUser;
 
     private static final Logger logger = LoggerFactory.getLogger(UserServices.class);
+
+    @Override
+    public void save(Object pojo) throws Exception {
+        TblUser createdUser = (TblUser) pojo;
+        try {
+            super.save(createdUser);
+            daoUser.save(createdUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void update(Object pojo) throws Exception {
+        TblUser updatedUser = (TblUser) pojo;
+        try {
+            TblUser tblUser = daoUser.findOne(updatedUser.getUsername());
+            tblUser.setName(updatedUser.getName());
+            tblUser.setStatus(updatedUser.getStatus());
+            tblUser.setLoginFailCount(updatedUser.getLoginFailCount());
+            tblUser.setPassword(updatedUser.getPassword());
+            tblUser.setPhone(updatedUser.getPhone());
+            tblUser.setEmail(updatedUser.getEmail());
+            tblUser.setStartTime(updatedUser.getStartTime());
+            tblUser.setEndTime(updatedUser.getEndTime());
+
+            super.update(updatedUser);
+            daoUser.save(tblUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+    }
 
     public List<TblUser> queryList(String username, String name) throws Exception {
         List<TblUser> list = null;
@@ -52,47 +84,6 @@ public class UserServices {
             logger.error(e.getMessage());
         }
         return user;
-    }
-
-    public void save(TblUser user) throws Exception {
-        try {
-            TblUser createBy = VaadinSession.getCurrent().getAttribute(TblUser.class);
-            if (createBy != null) {
-                user.setCreateBy(createBy.getUsername());
-                user.setCreateDate(new Date());
-                user.setVersi(user.getCreateDate().getTime());
-            }
-            daoUser.save(user);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-        }
-    }
-
-    public void update(TblUser user) throws Exception {
-        try {
-            TblUser tblUser = daoUser.findOne(user.getUsername());
-            tblUser.setName(user.getName());
-            tblUser.setStatus(user.getStatus());
-            tblUser.setLoginFailCount(user.getLoginFailCount());
-            tblUser.setPassword(user.getPassword());
-            tblUser.setPhone(user.getPhone());
-            tblUser.setEmail(user.getEmail());
-            tblUser.setStartTime(user.getStartTime());
-            tblUser.setEndTime(user.getEndTime());
-
-            TblUser updateBy = VaadinSession.getCurrent().getAttribute(TblUser.class);
-            if (updateBy != null) {
-                tblUser.setUpdateBy(updateBy.getUsername());
-                tblUser.setUpdateDate(new Date());
-                tblUser.setVersi(user.getUpdateDate().getTime());
-            }
-
-            daoUser.save(tblUser);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-        }
     }
 
 }

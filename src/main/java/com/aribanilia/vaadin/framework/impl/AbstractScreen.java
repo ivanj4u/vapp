@@ -4,6 +4,7 @@
 
 package com.aribanilia.vaadin.framework.impl;
 
+import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.loader.MenuLoader;
 import com.vaadin.server.Responsive;
 import com.vaadin.spring.annotation.UIScope;
@@ -65,17 +66,17 @@ public abstract class AbstractScreen extends Panel implements PriviledgeModel {
 
     public boolean setMode(int mode) {
         this.mode = mode;
-        if (mode == MODE_NEW) {
+        if (mode == Constants.APP_MODE.MODE_NEW) {
             if (isAuthorizedToAdd()) {
                 setModeNew();
                 return true;
             }
-        } else if (mode == MODE_UPDATE) {
+        } else if (mode == Constants.APP_MODE.MODE_UPDATE) {
             if (isAuthorizedToUpdate()) {
                 setModeUpdate();
                 return true;
             }
-        } else if (mode == MODE_VIEW) {
+        } else if (mode == Constants.APP_MODE.MODE_VIEW) {
             if (isAuthorizedToView()) {
                 setModeView();
                 return true;
@@ -96,23 +97,23 @@ public abstract class AbstractScreen extends Panel implements PriviledgeModel {
 
     @Override
     public boolean isAuthorizedToView() {
-        return menuLoader.getPriviledge(getClass().getName()) != null
-                ? menuLoader.getPriviledge(getClass().getName()).getIsView() == '1' : false;
+        return menuLoader.getPriviledge(getClass().getName()) == null
+                || (menuLoader.getPriviledge(getClass().getName()) != null && menuLoader.getPriviledge(getClass().getName())
+                .getIsView() == '1');
     }
 
     @Override
     public boolean isAuthorizedToUpdate() {
-        boolean b = false;
-        if (menuLoader.getPriviledge(getClass().getName()) != null) {
-            b = menuLoader.getPriviledge(getClass().getName()).getIsUpdate() == '1';
-        }
-        return b;
+        return menuLoader.getPriviledge(getClass().getName()) == null
+                || (menuLoader.getPriviledge(getClass().getName()) != null && menuLoader.getPriviledge(getClass().getName())
+                .getIsUpdate() == '1');
     }
 
     @Override
     public boolean isAuthorizedToDelete() {
-        return menuLoader.getPriviledge(getClass().getName()) != null
-                ? menuLoader.getPriviledge(getClass().getName()).getIsDelete() == '1' : false;
+        return menuLoader.getPriviledge(getClass().getName()) == null
+                || (menuLoader.getPriviledge(getClass().getName()) != null && menuLoader.getPriviledge(getClass().getName())
+                .getIsDelete() == '1');
     }
 
     @Override

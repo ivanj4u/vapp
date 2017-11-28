@@ -15,4 +15,5 @@ public interface MenuDao extends CrudRepository<TblMenu, String> {
     @Override
     @Query(value = "select menu from TblMenu menu order by menu.position asc")
     List<TblMenu> findAll();
+
 }

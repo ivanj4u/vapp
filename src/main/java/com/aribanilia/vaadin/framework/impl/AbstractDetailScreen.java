@@ -6,11 +6,13 @@ package com.aribanilia.vaadin.framework.impl;
 
 import com.aribanilia.vaadin.framework.listener.DetailCallbackListener;
 import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
+@UIScope
 public abstract class AbstractDetailScreen extends AbstractScreen {
 
     protected DetailCallbackListener listener;
@@ -36,13 +38,9 @@ public abstract class AbstractDetailScreen extends AbstractScreen {
         buttonBar.addComponent(btnSave = new Button("Simpan"));
         buttonBar.addComponent(btnCancel = new Button("Batal"));
 
-        btnSave.addListener(event -> {
-            doSave();
-        });
+        btnSave.addListener(event -> doSave());
 
-        btnCancel.addListener(event -> {
-            doCancel();
-        });
+        btnCancel.addListener(event -> doCancel());
     }
 
     protected void doCancel() {

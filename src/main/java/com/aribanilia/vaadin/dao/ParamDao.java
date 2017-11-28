@@ -13,4 +13,5 @@ public interface ParamDao extends CrudRepository<TblParam, String> {
 
     @Override
     List<TblParam> findAll();
+
 }

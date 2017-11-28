@@ -12,5 +12,13 @@ import java.util.List;
 
 public interface UserGroupDao extends CrudRepository<TblUserGroup, TblUserGroupId> {
 
+    @Override
+    List<TblUserGroup> findAll();
+
+    List<TblUserGroup> findByGroupId(String groupId);
+
     List<TblUserGroup> findByUsername(String username);
+
+    List<TblUserGroup> findByGroupIdAndUsername(String groupId, String username);
+
 }

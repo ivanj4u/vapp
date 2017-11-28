@@ -154,38 +154,28 @@ public class UserView extends AbstractDetailScreen {
             if (getMode() == Constants.APP_MODE.MODE_NEW) {
                 pojoUser = new TblUser();
                 pojoUser.setUsername(txtUsername.getValue());
-                pojoUser.setName(txtName.getValue());
-                pojoUser.setEmail(txtEmail.getValue());
-                pojoUser.setPhone(txtPhone.getValue());
-                pojoUser.setPassword(txtPassword.getValue());
-                pojoUser.setStartTime(txtTglAwal.getValueDate());
-                pojoUser.setEndTime(txtTglAkhir.getValueDate());
-                pojoUser.setLoginFailCount(0);
-                pojoUser.setStatus(cmbStatus.getValue().getValue().toString());
-
-                pojoUser.setCreateBy(VaadinSession.getCurrent().getAttribute(TblUser.class).getUsername());
-                pojoUser.setCreateDate(new Date());
-                pojoUser.setVersi(pojoUser.getCreateDate().getTime());
-
-                servicesUser.save(pojoUser);
-
-                listener.onAfterAdded(pojoUser);
             } else {
                 if (!doValidateData()) {
                     return;
                 }
-                pojoUser.setName(txtName.getValue());
-                pojoUser.setEmail(txtEmail.getValue());
-                pojoUser.setPhone(txtPhone.getValue());
-                pojoUser.setStartTime(txtTglAwal.getValueDate());
-                pojoUser.setEndTime(txtTglAkhir.getValueDate());
-                pojoUser.setLoginFailCount(0);
-                pojoUser.setStatus(cmbStatus.getValue().getValue().toString());
+            }
+            pojoUser.setName(txtName.getValue());
+            pojoUser.setEmail(txtEmail.getValue());
+            pojoUser.setPhone(txtPhone.getValue());
+            pojoUser.setPassword(txtPassword.getValue());
+            pojoUser.setStartTime(txtTglAwal.getValueDate());
+            pojoUser.setEndTime(txtTglAkhir.getValueDate());
+            pojoUser.setLoginFailCount(0);
+            pojoUser.setStatus(cmbStatus.getValue().getValue().toString());
 
+            if (getMode() == Constants.APP_MODE.MODE_NEW) {
+                servicesUser.save(pojoUser);
+                listener.onAfterAdded(pojoUser);
+            } else {
                 servicesUser.update(pojoUser);
-
                 listener.onAfterUpdated(pojoUser);
             }
+            doReset();
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());
