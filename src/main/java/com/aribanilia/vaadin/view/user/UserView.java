@@ -157,6 +157,7 @@ public class UserView extends AbstractDetailScreen {
                 pojoUser.setName(txtName.getValue());
                 pojoUser.setEmail(txtEmail.getValue());
                 pojoUser.setPhone(txtPhone.getValue());
+                pojoUser.setPassword(txtPassword.getValue());
                 pojoUser.setStartTime(txtTglAwal.getValueDate());
                 pojoUser.setEndTime(txtTglAkhir.getValueDate());
                 pojoUser.setLoginFailCount(0);

@@ -75,6 +75,7 @@ public class UserServices {
             tblUser.setName(user.getName());
             tblUser.setStatus(user.getStatus());
             tblUser.setLoginFailCount(user.getLoginFailCount());
+            tblUser.setPassword(user.getPassword());
             tblUser.setPhone(user.getPhone());
             tblUser.setEmail(user.getEmail());
             tblUser.setStartTime(user.getStartTime());
