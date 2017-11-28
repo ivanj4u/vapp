@@ -6,14 +6,15 @@ package com.aribanilia.vaadin.framework.component;
 
 import com.aribanilia.vaadin.entity.TblMenu;
 import com.aribanilia.vaadin.entity.TblUser;
+import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.page.LoginPage;
 import com.aribanilia.vaadin.framework.page.MainPage;
-import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.loader.MenuLoader;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -21,10 +22,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+
 
 @SuppressWarnings("deprecation")
+@SpringComponent
 @UIScope
 public class MenuComponent extends CustomComponent {
+    @Autowired
     private MenuLoader menuLoader;
 
     // Component Menu
@@ -35,10 +40,8 @@ public class MenuComponent extends CustomComponent {
     private static final String STYLE_VISIBLE = "valo-menu-visible";
     private static final Logger logger = LoggerFactory.getLogger(MenuComponent.class);
 
-    @Autowired
-    public MenuComponent(MenuLoader menuLoader) {
-        this.menuLoader = menuLoader;
-
+    @PostConstruct
+    public void init() {
         if (getCurrentUser() != null) {
             setPrimaryStyleName("valo-menu");
             setId(ID);

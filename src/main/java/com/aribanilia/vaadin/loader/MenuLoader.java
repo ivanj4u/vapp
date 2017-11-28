@@ -12,7 +12,6 @@ import com.aribanilia.vaadin.framework.impl.AbstractScreen;
 import com.aribanilia.vaadin.service.MenuServices;
 import com.aribanilia.vaadin.service.PriviledgeServices;
 import com.aribanilia.vaadin.service.UserGroupServices;
-import com.aribanilia.vaadin.service.UserServices;
 import com.vaadin.spring.annotation.SpringComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ public class MenuLoader {
 
     private Vector<TblMenu> v = new Vector<>();
     private Vector<TblMenu> vSessionedPerUser = new Vector<>();
-    private ConcurrentHashMap<String, AbstractScreen> cacheClass = new ConcurrentHashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(MenuLoader.class);
 
@@ -47,30 +45,13 @@ public class MenuLoader {
     public AbstractScreen getScreen(String menuId) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         for (TblMenu menu : v) {
             if (menu.getMenuId().equals(menuId)) {
-                AbstractScreen obj = cacheClass.get(menu.getMenuId());
-                if (obj != null)
-                    return obj;
                 Class c = Class.forName(menu.getMenuClass());
-                obj = (AbstractScreen) applicationContext.getBean(c);
-                cacheClass.put(menu.getMenuId(), obj);
+                AbstractScreen obj = (AbstractScreen) applicationContext.getBean(c);
                 obj.setParam(menu.getParam());
                 return obj;
             }
         }
         return null;
-    }
-
-    public void resetScreen(String className) {
-        List<String> listOfRemoved = new ArrayList<>();
-        for (Iterator<String> it = cacheClass.keySet().iterator(); it.hasNext(); ) {
-            String key = it.next();
-            AbstractScreen screen = cacheClass.get(key);
-            if (screen.getClass().getName().equals(className)) {
-                listOfRemoved.add(key);
-            }
-        }
-        for (String key : listOfRemoved)
-            cacheClass.remove(key);
     }
 
     private Hashtable<String, TblPriviledge> hSessionedMenuperUser = new Hashtable<>();
@@ -137,6 +118,5 @@ public class MenuLoader {
         hSessionedMenuperUser.clear();
         hSessionedMenuperUser2.clear();
         vSessionedPerUser.removeAllElements();
-        cacheClass.clear();
     }
 }

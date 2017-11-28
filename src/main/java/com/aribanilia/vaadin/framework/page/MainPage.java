@@ -27,10 +27,9 @@ import javax.annotation.PostConstruct;
 @SpringView(name = MainPage.VIEW_NAME)
 public class MainPage extends HorizontalLayout implements View {
     @Autowired private MenuLoader menuLoader;
+    @Autowired private MenuComponent menuComponent;
     @Autowired private SessionServices servicesSession;
     @Autowired private LandingPage landingPage;
-
-    private MenuComponent menuComponent;
 
     public static final String VIEW_NAME = "main";
     private static final Logger logger = LoggerFactory.getLogger(MainPage.class);
@@ -49,7 +48,6 @@ public class MainPage extends HorizontalLayout implements View {
         content.setSizeFull();
         content.setContent(null);
 
-        this.menuComponent = new MenuComponent(menuLoader);
         addComponent(menuComponent);
         addComponent(content);
         setExpandRatio(content, 1.0f);
@@ -58,11 +56,13 @@ public class MainPage extends HorizontalLayout implements View {
     private boolean validateUserSession() {
         try {
             TblUser user = VaadinSession.getCurrent().getAttribute(TblUser.class);
-            String sessionId = VaadinSession.getCurrent().getSession().getId();
-            if (!servicesSession.sessionCheck(user.getUsername(), sessionId)) {
-                Notification.show("Anda telah keluar", "Anda Telah Keluar/Login dari Komputer Lain!", Notification.Type.HUMANIZED_MESSAGE);
-                VaadinSession.getCurrent().close();
-                return false;
+            if (user != null) {
+                String sessionId = VaadinSession.getCurrent().getSession().getId();
+                if (!servicesSession.sessionCheck(user.getUsername(), sessionId)) {
+                    Notification.show("Anda telah keluar", "Anda Telah Keluar/Login dari Komputer Lain!", Notification.Type.HUMANIZED_MESSAGE);
+                    VaadinSession.getCurrent().close();
+                    return false;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
