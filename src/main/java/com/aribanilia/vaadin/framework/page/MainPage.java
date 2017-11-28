@@ -2,7 +2,7 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vaadin.framework;
+package com.aribanilia.vaadin.framework.page;
 
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.framework.component.MenuComponent;

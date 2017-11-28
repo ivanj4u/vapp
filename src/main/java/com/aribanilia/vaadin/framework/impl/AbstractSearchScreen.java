@@ -8,7 +8,6 @@ import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.listener.DetailCallbackListener;
 import com.vaadin.server.Responsive;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -167,7 +166,7 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
     }
 
     protected boolean getModality() {
-        return false;
+        return true;
     }
 
     protected void doAdd() {
@@ -182,7 +181,7 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
         }
         getDetailScreen().setMode(Constants.APP_MODE.MODE_UPDATE);
         showDetailScreen();
-        getDetailScreen().setContentById(null);
+        getDetailScreen().setContentById(getRowId());
     }
 
     protected void doView() {
@@ -192,7 +191,7 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
         }
         getDetailScreen().setMode(Constants.APP_MODE.MODE_VIEW);
         showDetailScreen();
-        getDetailScreen().setContentById(null);
+        getDetailScreen().setContentById(getRowId());
     }
 
     protected void doDelete() {

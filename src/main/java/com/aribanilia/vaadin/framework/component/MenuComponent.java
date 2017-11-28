@@ -6,8 +6,8 @@ package com.aribanilia.vaadin.framework.component;
 
 import com.aribanilia.vaadin.entity.TblMenu;
 import com.aribanilia.vaadin.entity.TblUser;
-import com.aribanilia.vaadin.framework.LoginPage;
-import com.aribanilia.vaadin.framework.MainPage;
+import com.aribanilia.vaadin.framework.page.LoginPage;
+import com.aribanilia.vaadin.framework.page.MainPage;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.loader.MenuLoader;
 import com.vaadin.server.FontAwesome;

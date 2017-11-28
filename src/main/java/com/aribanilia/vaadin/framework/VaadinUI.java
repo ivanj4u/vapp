@@ -5,6 +5,8 @@
 package com.aribanilia.vaadin.framework;
 
 import com.aribanilia.vaadin.entity.TblUser;
+import com.aribanilia.vaadin.framework.page.LoginPage;
+import com.aribanilia.vaadin.framework.page.MainPage;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.navigator.Navigator;

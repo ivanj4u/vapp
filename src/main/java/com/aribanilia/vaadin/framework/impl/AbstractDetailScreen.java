@@ -5,9 +5,12 @@
 package com.aribanilia.vaadin.framework.impl;
 
 import com.aribanilia.vaadin.framework.listener.DetailCallbackListener;
+import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
+@SpringComponent
 public abstract class AbstractDetailScreen extends AbstractScreen {
 
     protected DetailCallbackListener listener;
@@ -16,9 +19,11 @@ public abstract class AbstractDetailScreen extends AbstractScreen {
 
     public AbstractDetailScreen(DetailCallbackListener listener) {
         this.listener = listener;
+        this.addStyleName(ValoTheme.PANEL_WELL);
     }
 
     public AbstractDetailScreen() {
+        this.addStyleName(ValoTheme.PANEL_WELL);
     }
 
     public void setListener(DetailCallbackListener listener) {
@@ -45,27 +50,8 @@ public abstract class AbstractDetailScreen extends AbstractScreen {
             listener.onCancel();
     }
 
-    @Override
-    protected void initComponents() {
-
-    }
-
-    @Override
-    public void setModeNew() {
-
-    }
-
-    @Override
-    public void setModeUpdate() {
-
-    }
-
-    @Override
-    public void setModeView() {
-
-    }
-
     protected abstract void doSave();
+    protected abstract void doReset();
     protected abstract void setContentById(Object pojo);
 
 }

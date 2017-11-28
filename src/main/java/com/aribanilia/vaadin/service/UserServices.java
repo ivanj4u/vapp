@@ -7,12 +7,14 @@ package com.aribanilia.vaadin.service;
 import com.aribanilia.vaadin.dao.UserDao;
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.util.ValidationHelper;
+import com.vaadin.server.VaadinSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -54,6 +56,27 @@ public class UserServices {
 
     public void save(TblUser user) throws Exception {
         try {
+            TblUser userCreate = VaadinSession.getCurrent().getAttribute(TblUser.class);
+            if (userCreate != null) {
+                user.setCreateBy(userCreate.getUsername());
+                user.setCreateDate(new Date());
+                user.setVersi(user.getCreateDate().getTime());
+            }
+            daoUser.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+    }
+
+    public void update(TblUser user) throws Exception {
+        try {
+            TblUser userUpdate = VaadinSession.getCurrent().getAttribute(TblUser.class);
+            if (userUpdate != null) {
+                user.setUpdateBy(userUpdate.getUsername());
+                user.setUpdateDate(new Date());
+                user.setVersi(user.getUpdateDate().getTime());
+            }
             daoUser.save(user);
         } catch (Exception e) {
             e.printStackTrace();

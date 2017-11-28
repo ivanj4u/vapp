@@ -44,6 +44,7 @@ public class MenuLoader {
         v.addAll(list);
     }
 
+    @SuppressWarnings("unchecked")
     public AbstractScreen getScreen(String menuId) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         for (TblMenu menu : v) {
             if (menu.getMenuId().equals(menuId)) {

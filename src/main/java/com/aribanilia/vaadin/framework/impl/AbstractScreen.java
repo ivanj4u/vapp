@@ -19,7 +19,6 @@ public abstract class AbstractScreen extends Panel implements PriviledgeModel {
 
     protected boolean isInit = false;
     protected int mode = -1;
-    protected Object pojo;
     protected String param;
 
     public AbstractScreen() {

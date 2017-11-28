@@ -2,7 +2,7 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vaadin.view.admin;
+package com.aribanilia.vaadin.view.user;
 
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
@@ -21,6 +21,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 
@@ -29,6 +30,8 @@ import java.util.List;
 public class ListUserView extends AbstractSearchScreen implements View {
     @Autowired
     private UserServices servicesUser;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private TextField txtUsername, txtName;
     private AbstractDetailScreen detailScreen;
@@ -54,7 +57,9 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected void initGridComponent() {
-        grid.addComponent(new Label("Id Pengguna"), 0, row);
+        Label lbl = new Label("Id Pengguna");
+        lbl.setWidth("100px");
+        grid.addComponent(lbl, 0, row);
         grid.addComponent(txtUsername = new TextField(),1, row++);
         grid.addComponent(new Label("Nama"), 0, row);
         grid.addComponent(txtName = new TextField(),1, row++);
@@ -80,7 +85,7 @@ public class ListUserView extends AbstractSearchScreen implements View {
     protected AbstractDetailScreen getDetailScreen() {
         if (detailScreen == null) {
             try {
-                detailScreen = (AbstractDetailScreen) Class.forName("com.aribanilia.vaadin.view.admin.UserView").newInstance();
+                detailScreen = applicationContext.getBean(UserView.class);
                 detailScreen.setListener(this);
             } catch (Exception e) {
                 logger.error(e.getMessage());
@@ -97,12 +102,12 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected String getDetailScreenWidth() {
-        return "50%";
+        return "40%";
     }
 
     @Override
     protected String getDetailScreenHeight() {
-        return "70%";
+        return "55%";
     }
 
     @Override
@@ -114,7 +119,31 @@ public class ListUserView extends AbstractSearchScreen implements View {
             e.printStackTrace();
             logger.error(e.getMessage());
         }
+    }
 
+    @Override
+    public void onAfterAdded(Object pojo) {
+        super.onAfterAdded(pojo);
+        if (pojo != null) {
+            list.add((TblUser) pojo);
+            table.setItems(list);
+        }
+    }
+
+    @Override
+    public void onAfterUpdated(Object pojo) {
+        super.onAfterUpdated(pojo);
+        if (pojo != null) {
+            TblUser userBaru = (TblUser) pojo;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getUsername().equals(userBaru.getUsername())) {
+                    list.remove(i);
+                    list.add(userBaru);
+                    break;
+                }
+            }
+            table.setItems(list);
+        }
     }
 
     @Override

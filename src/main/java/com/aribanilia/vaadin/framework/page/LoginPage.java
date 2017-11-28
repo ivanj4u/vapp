@@ -2,7 +2,7 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vaadin.framework;
+package com.aribanilia.vaadin.framework.page;
 
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.loader.MenuLoader;
@@ -95,8 +95,8 @@ public class LoginPage extends VerticalLayout implements View {
 
         layout.addComponent(btnLogin = new Button("Login"));
         btnLogin.addClickListener(event -> {
-            if (ValidationHelper.validateRequired(txtUsername)
-                    && ValidationHelper.validateRequired(txtPassword)) {
+            if (ValidationHelper.validateFieldWithCaption(txtUsername)
+                    && ValidationHelper.validateFieldWithCaption(txtPassword)) {
                 try {
                     attemptLogin(txtUsername.getValue(), txtPassword.getValue());
                 } catch (Exception e) {
