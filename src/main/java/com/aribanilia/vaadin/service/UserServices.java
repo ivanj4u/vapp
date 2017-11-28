@@ -56,9 +56,9 @@ public class UserServices {
 
     public void save(TblUser user) throws Exception {
         try {
-            TblUser userCreate = VaadinSession.getCurrent().getAttribute(TblUser.class);
-            if (userCreate != null) {
-                user.setCreateBy(userCreate.getUsername());
+            TblUser createBy = VaadinSession.getCurrent().getAttribute(TblUser.class);
+            if (createBy != null) {
+                user.setCreateBy(createBy.getUsername());
                 user.setCreateDate(new Date());
                 user.setVersi(user.getCreateDate().getTime());
             }
@@ -71,13 +71,23 @@ public class UserServices {
 
     public void update(TblUser user) throws Exception {
         try {
-            TblUser userUpdate = VaadinSession.getCurrent().getAttribute(TblUser.class);
-            if (userUpdate != null) {
-                user.setUpdateBy(userUpdate.getUsername());
-                user.setUpdateDate(new Date());
-                user.setVersi(user.getUpdateDate().getTime());
+            TblUser tblUser = daoUser.findOne(user.getUsername());
+            tblUser.setName(user.getName());
+            tblUser.setStatus(user.getStatus());
+            tblUser.setLoginFailCount(user.getLoginFailCount());
+            tblUser.setPhone(user.getPhone());
+            tblUser.setEmail(user.getEmail());
+            tblUser.setStartTime(user.getStartTime());
+            tblUser.setEndTime(user.getEndTime());
+
+            TblUser updateBy = VaadinSession.getCurrent().getAttribute(TblUser.class);
+            if (updateBy != null) {
+                tblUser.setUpdateBy(updateBy.getUsername());
+                tblUser.setUpdateDate(new Date());
+                tblUser.setVersi(user.getUpdateDate().getTime());
             }
-            daoUser.save(user);
+
+            daoUser.save(tblUser);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());

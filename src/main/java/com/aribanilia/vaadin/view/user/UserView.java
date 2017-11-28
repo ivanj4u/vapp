@@ -250,7 +250,7 @@ public class UserView extends AbstractDetailScreen {
                 txtPassword.setValue(pojoUser.getPassword());
                 txtPasswordConfirm.setValue(pojoUser.getPassword());
                 txtTglAwal.setValueDate(pojoUser.getStartTime());
-                txtTglAkhir.setValueDate(pojoUser.getLastLogin());
+                txtTglAkhir.setValueDate(pojoUser.getEndTime());
                 cmbStatus.setSelectedItem(hComboBox.get(pojoUser.getStatus()));
             } else {
                 NotificationHelper.showNotification(Constants.APP_MESSAGE.INFO_DATA_NOT_EXIST);
