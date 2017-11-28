@@ -8,7 +8,7 @@ import com.aribanilia.vaadin.entity.TblMenu;
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.framework.LoginPage;
 import com.aribanilia.vaadin.framework.MainPage;
-import com.aribanilia.vaadin.framework.impl.AbstractScreen;
+import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.loader.MenuLoader;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
@@ -22,10 +22,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+@SuppressWarnings("deprecation")
 @UIScope
 public class MenuComponent extends CustomComponent {
     private MenuLoader menuLoader;
-    private MenuBar.MenuItem settingsItem;
+
+    // Component Menu
+    private CssLayout menuItemsLayout;
+    private MenuBar settings;
 
     public static final String ID = "menu";
     private static final String STYLE_VISIBLE = "valo-menu-visible";
@@ -39,7 +43,6 @@ public class MenuComponent extends CustomComponent {
             setPrimaryStyleName("valo-menu");
             setId(ID);
             setSizeUndefined();
-
             setCompositionRoot(buildContent());
         }
     }
@@ -54,9 +57,20 @@ public class MenuComponent extends CustomComponent {
         menuContent.setHeight("100%");
 
         menuContent.addComponent(buildTitle());
-        menuContent.addComponent(buildUserMenu());
+
+        if (settings == null) {
+            settings = new MenuBar();
+            settings.addStyleName("user-menu");
+        }
+        menuContent.addComponent(settings);
+
         menuContent.addComponent(buildToggleButton());
-        menuContent.addComponent(buildMenuItem());
+
+        if (menuItemsLayout == null) {
+            menuItemsLayout = new CssLayout();
+            menuItemsLayout.addStyleName("valo-menuitems");
+        }
+        menuContent.addComponent(menuItemsLayout);
 
         return menuContent;
     }
@@ -77,26 +91,24 @@ public class MenuComponent extends CustomComponent {
                 .getAttribute(TblUser.class);
     }
 
-    private Component buildUserMenu() {
-        final MenuBar settings = new MenuBar();
-        settings.addStyleName("user-menu");
-        final TblUser user = getCurrentUser();
-        settingsItem = settings.addItem("",
-                new ThemeResource("img/logo.jpg"), null);
-        settingsItem.addItem("Edit Profile", menuItem ->  {
+    private void buildUserMenu() {
+        if (settings.getItems().size() == 0) {
+            String imgSource = getCurrentUser().getImage() != null ? "img/" + getCurrentUser().getImage() : "img/guest.png";
+            MenuBar.MenuItem settingsItem = settings.addItem("",
+                    new ThemeResource(imgSource), null);
+            settingsItem.addItem(Constants.CAPTION_MESSAGE.MENU_ITEM_PROFILE, menuItem ->  {
 //                ProfilePreferencesWindow.open(user, false);
-            Notification.show("Edit Profile Clicked");
-        });
-        settingsItem.addItem("Preferences", menuItem ->  {
+                Notification.show("Edit Profile Clicked");
+            });
+            settingsItem.addItem(Constants.CAPTION_MESSAGE.MENU_ITEM_PASSWORD, menuItem ->  {
 //                ProfilePreferencesWindow.open(user, true);
-            Notification.show("Preferences Clicked");
-        });
-        settingsItem.addSeparator();
-        settingsItem.addItem("Sign Out", menuItem ->  {
-            VaadinSession.getCurrent().setAttribute(TblUser.class.getName(), null);
-            getUI().getNavigator().navigateTo(LoginPage.VIEW_NAME);
-        });
-        return settings;
+                Notification.show("Preferences Clicked");
+            });
+            settingsItem.addSeparator();
+            settingsItem.addItem(Constants.CAPTION_MESSAGE.MENU_ITEM_LOGOUT, menuItem ->  {
+                doLogout();
+            });
+        }
     }
 
     private Component buildToggleButton() {
@@ -115,35 +127,39 @@ public class MenuComponent extends CustomComponent {
         return valoMenuToggleButton;
     }
 
-    private Component buildMenuItem() {
-        CssLayout menuItemsLayout = new CssLayout();
-        menuItemsLayout.addStyleName("valo-menuitems");
-        try {
-            for (final TblMenu view : menuLoader.getAuthorizedMenu()) {
-                AbstractScreen screen = menuLoader.getScreen(view.getMenuId());
-                if (screen == null) {
-                    logger.error("Screen Error : " + view.getMenuClass());
-                    continue;
+    private void buildMenuItem() {
+        if (menuItemsLayout.getComponentCount() == 0) {
+            try {
+                for (final TblMenu view : menuLoader.getAuthorizedMenu()) {
+                    Button menuItemComponent = new Button();
+                    menuItemComponent.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+                    menuItemComponent.setCaption(view.getMenuName().substring(0, 1).toUpperCase()
+                            + view.getMenuName().substring(1));
+                    menuItemComponent.addClickListener(event -> getUI().getNavigator().navigateTo(MainPage.VIEW_NAME + "/" + view.getMenuId()));
+                    menuItemsLayout.addComponent(menuItemComponent);
                 }
-                Button menuItemComponent = new Button();
-                menuItemComponent.setPrimaryStyleName(ValoTheme.MENU_ITEM);
-                menuItemComponent.setCaption(view.getMenuName().substring(0, 1).toUpperCase()
-                        + view.getMenuName().substring(1));
-                menuItemComponent.addClickListener(event -> {
-                    getUI().getNavigator().navigateTo(MainPage.VIEW_NAME + "/" + view.getMenuId());
-                });
-                menuItemsLayout.addComponent(menuItemComponent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error(e.getMessage());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
         }
-        return menuItemsLayout;
+    }
+
+    private void doLogout() {
+        settings.removeItems();
+        menuItemsLayout.removeAllComponents();
+        VaadinSession.getCurrent().setAttribute(TblUser.class.getName(), null);
+        getUI().getNavigator().navigateTo(LoginPage.VIEW_NAME);
     }
 
     @Override
     public void attach() {
         super.attach();
+    }
+
+    public void createMenu() {
+        buildUserMenu();
+        buildMenuItem();
     }
 
 }

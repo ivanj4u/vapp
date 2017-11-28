@@ -41,6 +41,10 @@ public class Constants {
 
         String QUESTION_SAVE = "Apakah Anda yakin untuk menyimpan data ini ?";
         String QUESTION_DELETE = "Apakah Anda yakin untuk menghapus data ini ?";
+
+        String MENU_ITEM_PROFILE = "Ubah Profil";
+        String MENU_ITEM_PASSWORD = "Ubah Password";
+        String MENU_ITEM_LOGOUT = "Keluar";
     }
 
     public interface APP_MODE {
@@ -96,5 +100,14 @@ public class Constants {
         public void setType(Notification.Type type) {
             this.type = type;
         }
+    }
+
+    public interface VIEW_ID {
+        String DASHBOARD_VIEW = "100";
+        String REPORT_VIEW = "200";
+        String SALES_VIEW = "300";
+        String SCHEDULE_VIEW = "400";
+        String TRANSACTION_VIEW = "500";
+        String USER_VIEW = "600";
     }
 }

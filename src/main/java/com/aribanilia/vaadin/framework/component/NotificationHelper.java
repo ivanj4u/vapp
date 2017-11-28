@@ -18,7 +18,7 @@ public class NotificationHelper {
     }
 
     public static void showNotification(Constants.APP_MESSAGE appMessage) {
-        Notification.show(appMessage.getCaption(), appMessage.getCaption(), appMessage.getType());
+        Notification.show(appMessage.getCaption(), appMessage.getMessage(), appMessage.getType());
     }
 
 }

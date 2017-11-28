@@ -4,6 +4,7 @@
 
 package com.aribanilia.vaadin.view;
 
+import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractScreen;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
@@ -11,7 +12,7 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Label;
 
 @UIScope
-@SpringView
+@SpringView(name = Constants.VIEW_ID.DASHBOARD_VIEW)
 public class DashboardView extends AbstractScreen implements View {
 
     @Override

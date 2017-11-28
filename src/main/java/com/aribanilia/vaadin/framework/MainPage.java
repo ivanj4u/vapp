@@ -9,7 +9,6 @@ import com.aribanilia.vaadin.framework.component.MenuComponent;
 import com.aribanilia.vaadin.framework.impl.AbstractScreen;
 import com.aribanilia.vaadin.loader.MenuLoader;
 import com.aribanilia.vaadin.service.SessionServices;
-import com.aribanilia.vaadin.view.LandingView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinSession;
@@ -27,12 +26,14 @@ import javax.annotation.PostConstruct;
 @UIScope
 @SpringView(name = MainPage.VIEW_NAME)
 public class MainPage extends HorizontalLayout implements View {
-    public static final String VIEW_NAME = "main";
-    private static final Logger logger = LoggerFactory.getLogger(MainPage.class);
-
     @Autowired private MenuLoader menuLoader;
     @Autowired private SessionServices servicesSession;
-    @Autowired private LandingView landingView;
+    @Autowired private LandingPage landingPage;
+
+    private MenuComponent menuComponent;
+
+    public static final String VIEW_NAME = "main";
+    private static final Logger logger = LoggerFactory.getLogger(MainPage.class);
 
     private Panel content;
 
@@ -43,11 +44,12 @@ public class MainPage extends HorizontalLayout implements View {
         setSpacing(false);
 
         // Create Content
-        this.content = new Panel();
+        content = new Panel();
         content.addStyleName("view-content");
         content.setSizeFull();
+        content.setContent(null);
 
-        final MenuComponent menuComponent = new MenuComponent(menuLoader);
+        this.menuComponent = new MenuComponent(menuLoader);
         addComponent(menuComponent);
         addComponent(content);
         setExpandRatio(content, 1.0f);
@@ -74,14 +76,12 @@ public class MainPage extends HorizontalLayout implements View {
         if (!validateUserSession()) {
             return;
         }
+        menuComponent.createMenu();
         if (event.getParameters() == null || event.getParameters().isEmpty()) {
-            logger.info("Event is null");
-            content.setContent(landingView);
+            content.setContent(landingPage);
         } else {
-            logger.info("Event is not null : " + event.getParameters());
             try {
                 AbstractScreen screen = menuLoader.getScreen(event.getParameters());
-//                screen.show();
                 content.setContent(screen);
             } catch (Exception e) {
                 e.printStackTrace();

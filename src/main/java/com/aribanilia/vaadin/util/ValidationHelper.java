@@ -23,4 +23,10 @@ public class ValidationHelper {
         }
         return true;
     }
+
+    public static boolean validateValueNotNull(Object value) {
+        if (value != null && !value.toString().equals(""))
+            return true;
+        return false;
+    }
 }

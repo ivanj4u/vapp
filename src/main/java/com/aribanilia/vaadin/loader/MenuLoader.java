@@ -17,6 +17,7 @@ import com.vaadin.spring.annotation.SpringComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -28,6 +29,7 @@ public class MenuLoader {
     @Autowired private UserGroupServices servicesUserGroup;
     @Autowired private PriviledgeServices servicesPriviledge;
     @Autowired private MenuServices servicesMenu;
+    @Autowired ApplicationContext applicationContext;
 
     private static Vector<TblMenu> v = new Vector<>();
     private Vector<TblMenu> vSessionedPerUser = new Vector<>();
@@ -48,7 +50,8 @@ public class MenuLoader {
                 AbstractScreen obj = cacheClass.get(menu.getMenuId());
                 if (obj != null)
                     return obj;
-                obj = (AbstractScreen) Class.forName(menu.getMenuClass()).newInstance();
+                Class c = Class.forName(menu.getMenuClass());
+                obj = (AbstractScreen) applicationContext.getBean(c);
                 cacheClass.put(menu.getMenuId(), obj);
                 obj.setParam(menu.getParam());
                 return obj;

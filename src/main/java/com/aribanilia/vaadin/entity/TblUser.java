@@ -22,9 +22,12 @@ public class TblUser extends AuditTrail implements Serializable {
     private String email;
     @Column(name = "phone", length = 20)
     private String phone;
+    @Column(name = "image")
+    private String image;
     /**
      * 0 = Tidak Aktif
      * 1 = Aktif
+
      * 2 = Blokir
      */
     @Column(name = "status", length = 2)
@@ -82,6 +85,14 @@ public class TblUser extends AuditTrail implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     /**

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringUI
 @Theme(ValoTheme.THEME_NAME)
 @Title("Vaadin Spring")
+
 public class VaadinUI extends UI {
     @Autowired private SpringViewProvider viewProvider;
     private MainPage mainPage;
@@ -30,7 +31,7 @@ public class VaadinUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
-        this.mainPage = new MainPage();
+        mainPage = new MainPage();
 
         setErrorHandler(event -> {
             Throwable t = DefaultErrorHandler.findRelevantThrowable(event.getThrowable());

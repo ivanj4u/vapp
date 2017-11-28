@@ -13,6 +13,13 @@ public interface UserDao extends CrudRepository<TblUser, String> {
 
     TblUser findByUsernameAndPassword(String username, String password);
 
+    @Override
+    List<TblUser> findAll();
+
+    List<TblUser> queryTblUsersByNameLike(String name);
+
+    List<TblUser> queryTblUsersByUsernameEquals(String username);
+
     List<TblUser> queryTblUsersByUsernameEqualsAndNameIsLike(String username, String name);
 
 }

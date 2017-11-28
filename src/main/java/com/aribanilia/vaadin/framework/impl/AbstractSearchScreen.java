@@ -8,6 +8,7 @@ import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.listener.DetailCallbackListener;
 import com.vaadin.server.Responsive;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -47,8 +48,12 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
 
     private Panel initPencarian() {
         Panel panel = new Panel("Kriteria Pencarian");
-        panel.setStyleName(ValoTheme.PANEL_WELL);
+        panel.addStyleName(ValoTheme.PANEL_WELL);
         panel.setSizeFull();
+
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
+        layout.setMargin(true);
 
         grid = new GridLayout(getGridColumn(), getGridRow());
         grid.setSpacing(false);
@@ -75,7 +80,9 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
         initGridComponent();
         grid.addComponent(buttonBar, 1, row++);
         grid.setComponentAlignment(buttonBar, Alignment.MIDDLE_LEFT);
-        panel.setContent(grid);
+
+        layout.addComponent(grid);
+        panel.setContent(layout);
 
         return panel;
     }

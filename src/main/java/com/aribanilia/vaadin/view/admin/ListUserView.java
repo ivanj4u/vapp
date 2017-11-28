@@ -9,9 +9,7 @@ import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
 import com.aribanilia.vaadin.framework.impl.AbstractSearchScreen;
-import com.aribanilia.vaadin.loader.MenuLoader;
 import com.aribanilia.vaadin.service.UserServices;
-import com.aribanilia.vaadin.util.ValidationHelper;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -35,6 +33,7 @@ public class ListUserView extends AbstractSearchScreen implements View {
     private TextField txtUsername, txtName;
     private AbstractDetailScreen detailScreen;
     private List<TblUser> list;
+    private Grid<TblUser> table;
 
     private final String USERNAME = "Id Pengguna";
     private final String NAME = "Nama";
@@ -63,14 +62,11 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected Component initTableData() {
-        Grid<TblUser> table = new Grid<>();
-        table.setItems(list);
+        table = new Grid<>();
         table.setWidth("100%");
         table.addStyleName(ValoTheme.TABLE_COMPACT);
         table.setSelectionMode(Grid.SelectionMode.SINGLE);
-        table.addItemClickListener(event -> {
-            setRowId(event.getItem());
-        });
+        table.addItemClickListener(event -> setRowId(event.getItem()));
 
         table.addColumn(TblUser::getUsername).setCaption(USERNAME);
         table.addColumn(TblUser::getName).setCaption(NAME);
@@ -111,16 +107,9 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected void doSearch() {
-        String username = "?";
-        String name = "?";
-        if (ValidationHelper.validateFieldWithoutWarn(txtUsername)) {
-            username = txtUsername.getValue();
-        }
-        if (ValidationHelper.validateFieldWithoutWarn(txtName)) {
-            name = "%" + txtName + "%";
-        }
         try {
-            list = servicesUser.queryList(username, name);
+            list = servicesUser.queryList(txtUsername.getValue(), txtName.getValue());
+            table.setItems(list);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());
@@ -130,11 +119,13 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected void doReset() {
-
+        txtName.setValue("");
+        txtUsername.setValue("");
     }
 
     @Override
     protected boolean validateSearchRequired() {
-        return false;
+        return true;
     }
+
 }

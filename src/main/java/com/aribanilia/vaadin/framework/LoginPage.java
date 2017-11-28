@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.util.Date;
 
+@SuppressWarnings("deprecation")
 @UIScope
 @SpringView(name = LoginPage.VIEW_NAME)
 public class LoginPage extends VerticalLayout implements View {
@@ -136,8 +137,8 @@ public class LoginPage extends VerticalLayout implements View {
                     showFailedLogin("Login Gagal!. Username atau Password yang anda masukkan salah!");
                 }
             } else {
-                logger.error("User : " + user.getUsername() + " tidak ditemukan!");
-                showFailedLogin("User : " + user.getUsername() + " tidak ditemukan!");
+                logger.error("User : " + txtUsername.getValue() + " tidak ditemukan!");
+                showFailedLogin("User : " + txtUsername.getValue() + " tidak ditemukan!");
             }
 
         } catch (Exception e) {
