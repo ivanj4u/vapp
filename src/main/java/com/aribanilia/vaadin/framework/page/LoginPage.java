@@ -171,7 +171,9 @@ public class LoginPage extends VerticalLayout implements View {
                 // set status nonaktif
                 user.setStatus("0");
             }
-            servicesUser.save(user);
+            user.setUpdateDate(new Date());
+            user.setVersi(user.getUpdateDate().getTime());
+            servicesUser.update(user);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());
