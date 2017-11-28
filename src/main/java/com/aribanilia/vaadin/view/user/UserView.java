@@ -14,6 +14,7 @@ import com.aribanilia.vaadin.service.UserServices;
 import com.aribanilia.vaadin.util.ValidationHelper;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.Hashtable;
 
 @SpringComponent
+@UIScope
 public class UserView extends AbstractDetailScreen {
     @Autowired private UserServices servicesUser;
 
