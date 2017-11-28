@@ -25,13 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SpringComponent
 public class MenuLoader {
-    @Autowired private UserServices servicesUser;
     @Autowired private UserGroupServices servicesUserGroup;
     @Autowired private PriviledgeServices servicesPriviledge;
     @Autowired private MenuServices servicesMenu;
     @Autowired ApplicationContext applicationContext;
 
-    private static Vector<TblMenu> v = new Vector<>();
+    private Vector<TblMenu> v = new Vector<>();
     private Vector<TblMenu> vSessionedPerUser = new Vector<>();
     private ConcurrentHashMap<String, AbstractScreen> cacheClass = new ConcurrentHashMap<>();
 
