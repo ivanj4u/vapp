@@ -74,7 +74,7 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
         lbl.setWidth("100px");
         grid.addComponent(lbl, 0, row);
         grid.addComponent(txtGroupId = new TextField(),1, row++);
-        grid.addComponent(new Label("Id Group"), 0, row);
+        grid.addComponent(new Label("Id Pengguna"), 0, row);
         grid.addComponent(txtUsername = new TextField(),1, row++);
     }
 

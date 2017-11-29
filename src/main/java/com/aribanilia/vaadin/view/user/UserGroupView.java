@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 @SpringComponent
 @UIScope
@@ -66,14 +67,6 @@ public class UserGroupView extends AbstractDetailScreen {
         lbl.setWidth("155px");
         grid.addComponent(lbl, 0, row);
         grid.addComponent(txtUsername = new TextField(), 1, row++);
-//        txtUsername.addShortcutListener(new ShortcutListener("[ Enter ]", ShortcutAction.KeyCode.ENTER, null) {
-//            @Override
-//            public void handleAction(Object sender, Object target) {
-//                if (target == txtUsername && ValidationHelper.validateFieldWithoutWarn(txtUsername)) {
-//                    doSearchUser(txtUsername.getValue());
-//                }
-//            }
-//        });
         FieldShortcutListener listener = new FieldShortcutListener() {
             @Override
             public void onEnterKeyPressed() {
@@ -165,11 +158,25 @@ public class UserGroupView extends AbstractDetailScreen {
             return;
         }
         try {
-            if (getMode() == Constants.APP_MODE.MODE_NEW) {
-                listener.onAfterAdded(null);
-            } else {
-                listener.onAfterUpdated(null);
+            Set<ItemComponent> set = selectGroup.getSelectedItems();
+            if (getMode() == Constants.APP_MODE.MODE_UPDATE) {
+                // Hapus dulu userGroup yang ada
+                for (TblUserGroup group : listUserGroup) {
+                    servicesUserGroup.delete(group);
+                }
             }
+
+            for (ItemComponent itemComponent : set) {
+                TblUserGroup userGroup = new TblUserGroup();
+                userGroup.setGroupId((Long) itemComponent.getValue());
+                userGroup.setUsername(txtUsername.getValue());
+                servicesUserGroup.save(userGroup);
+            }
+            if (getMode() == Constants.APP_MODE.MODE_NEW)
+                listener.onAfterUpdated(null);
+            else
+                listener.onAfterAdded(null);
+
             doReset();
         } catch (Exception e) {
             e.printStackTrace();

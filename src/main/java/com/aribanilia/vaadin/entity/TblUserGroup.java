@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "tbl_user_group", schema = "vaadin")
 @IdClass(TblUserGroupId.class)
-public class TblUserGroup extends AuditTrail implements Serializable {
+public class TblUserGroup implements Serializable {
 
     @Id @Column(name = "username", length = 20, nullable = false)
     private String username;

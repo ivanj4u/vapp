@@ -74,4 +74,12 @@ public class UserGroupServices {
         }
         return list;
     }
+
+    public void save(TblUserGroup userGroup) {
+        daoUserGroup.save(userGroup);
+    }
+
+    public void delete(TblUserGroup userGroup) {
+        daoUserGroup.delete(userGroup);
+    }
 }

@@ -40,11 +40,11 @@ public class UserServices extends AuditTrailServices {
         try {
             TblUser tblUser = daoUser.findOne(updatedUser.getUsername());
             tblUser.setName(updatedUser.getName());
+            tblUser.setPassword(updatedUser.getPassword());
+            tblUser.setEmail(updatedUser.getEmail());
+            tblUser.setPhone(updatedUser.getPhone());
             tblUser.setStatus(updatedUser.getStatus());
             tblUser.setLoginFailCount(updatedUser.getLoginFailCount());
-            tblUser.setPassword(updatedUser.getPassword());
-            tblUser.setPhone(updatedUser.getPhone());
-            tblUser.setEmail(updatedUser.getEmail());
             tblUser.setStartTime(updatedUser.getStartTime());
             tblUser.setEndTime(updatedUser.getEndTime());
 
