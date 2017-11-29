@@ -4,7 +4,12 @@
 
 package com.aribanilia.vaadin.service;
 
+import com.aribanilia.vaadin.container.JoinUserGroup;
+import com.aribanilia.vaadin.dao.GroupDao;
+import com.aribanilia.vaadin.dao.UserDao;
 import com.aribanilia.vaadin.dao.UserGroupDao;
+import com.aribanilia.vaadin.entity.TblGroup;
+import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.entity.TblUserGroup;
 import com.aribanilia.vaadin.util.ValidationHelper;
 import org.slf4j.Logger;
@@ -13,12 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional
 public class UserGroupServices {
     @Autowired private UserGroupDao daoUserGroup;
+    @Autowired private UserDao daoUser;
+    @Autowired private GroupDao daoGroup;
 
     private static final Logger logger = LoggerFactory.getLogger(UserGroupServices.class);
 
@@ -43,6 +51,22 @@ public class UserGroupServices {
                 list = daoUserGroup.findByGroupId(groupId);
             } else {
                 list = daoUserGroup.findAll();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        return list;
+    }
+
+    public List<JoinUserGroup> searchUserGroup(String groupId, String username) throws Exception {
+        List<JoinUserGroup> list = new ArrayList<>();
+        try {
+            List<TblUserGroup> userGroups = getUserGroup(groupId, username);
+            for (TblUserGroup userGroup : userGroups) {
+                TblUser user = daoUser.findOne(userGroup.getUsername());
+                TblGroup group = daoGroup.findOne(userGroup.getGroupId());
+                list.add(new JoinUserGroup(group, user, userGroup));
             }
         } catch (Exception e) {
             e.printStackTrace();

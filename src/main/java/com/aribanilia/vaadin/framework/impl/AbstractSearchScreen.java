@@ -95,10 +95,11 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
         layout.setSizeFull();
         layout.setMargin(true);
 
+        initTableData();
         initButtonDetailScreen();
 
         layout.addComponent(buttonDetail);
-        layout.addComponent(initTableData());
+        layout.addComponent(getTableData());
         layout.setComponentAlignment(buttonDetail, Alignment.MIDDLE_RIGHT);
         layout.setExpandRatio(layout.getComponent(1), 1.0f);
 
@@ -253,7 +254,8 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
     protected abstract int getGridColumn();
     protected abstract int getGridRow();
     protected abstract void initGridComponent();
-    protected abstract Component initTableData();
+    protected abstract Component getTableData();
+    protected abstract void initTableData();
 
     protected abstract AbstractDetailScreen getDetailScreen();
     protected abstract String getDetailScreenTitle();

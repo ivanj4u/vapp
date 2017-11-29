@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,17 @@ public class ListUserView extends AbstractSearchScreen implements View {
     private static final Logger logger = LoggerFactory.getLogger(ListUserView.class);
 
     @Override
+    protected void beforeInitComponent() {
+        list = new ArrayList<>();
+
+        table = new Grid<>();
+        table.setWidth("100%");
+        table.addStyleName(ValoTheme.TABLE_COMPACT);
+        table.setSelectionMode(Grid.SelectionMode.SINGLE);
+        table.addItemClickListener(event -> setRowId(event.getItem()));
+    }
+
+    @Override
     protected int getGridColumn() {
         return 2;
     }
@@ -67,19 +79,16 @@ public class ListUserView extends AbstractSearchScreen implements View {
     }
 
     @Override
-    protected Component initTableData() {
-        table = new Grid<>();
-        table.setWidth("100%");
-        table.addStyleName(ValoTheme.TABLE_COMPACT);
-        table.setSelectionMode(Grid.SelectionMode.SINGLE);
-        table.addItemClickListener(event -> setRowId(event.getItem()));
+    protected Component getTableData() {
+        return table;
+    }
 
+    @Override
+    protected void initTableData() {
         table.addColumn(TblUser::getUsername).setCaption(USERNAME);
         table.addColumn(TblUser::getName).setCaption(NAME);
         table.addColumn(TblUser::getEmail).setCaption(EMAIL);
         table.addColumn(TblUser::getPhone).setCaption(TELP);
-
-        return table;
     }
 
     @Override
@@ -125,13 +134,9 @@ public class ListUserView extends AbstractSearchScreen implements View {
     @Override
     public void onAfterAdded(Object pojo) {
         super.onAfterAdded(pojo);
-        if (list == null) {
-            doSearch();
-        } else {
-            if (pojo != null) {
-                list.add((TblUser) pojo);
-                table.setItems(list);
-            }
+        if (pojo != null) {
+            list.add((TblUser) pojo);
+            table.setItems(list);
         }
     }
 
@@ -155,7 +160,7 @@ public class ListUserView extends AbstractSearchScreen implements View {
     protected void doReset() {
         txtName.setValue("");
         txtUsername.setValue("");
-        list = null;
+        list.clear();
         table.setItems(list);
     }
 

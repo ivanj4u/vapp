@@ -5,14 +5,13 @@
 package com.aribanilia.vaadin.view.user;
 
 import com.aribanilia.vaadin.entity.TblUser;
-import com.aribanilia.vaadin.framework.component.ComboBoxComponent;
+import com.aribanilia.vaadin.framework.component.ItemComponent;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.component.PopUpDateField;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
 import com.aribanilia.vaadin.service.UserServices;
 import com.aribanilia.vaadin.util.ValidationHelper;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -21,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
 import java.util.Hashtable;
 
 @SpringComponent
@@ -32,8 +30,8 @@ public class UserView extends AbstractDetailScreen {
     private TextField txtUsername, txtName, txtEmail, txtPhone;
     private PasswordField txtPassword, txtPasswordConfirm;
     private PopUpDateField txtTglAwal, txtTglAkhir;
-    private ComboBox<ComboBoxComponent> cmbStatus;
-    private Hashtable<Object, ComboBoxComponent> hComboBox;
+    private ComboBox<ItemComponent> cmbStatus;
+    private Hashtable<Object, ItemComponent> hItem;
     private TblUser pojoUser;
 
     private static final Logger logger = LoggerFactory.getLogger(UserView.class);
@@ -85,23 +83,27 @@ public class UserView extends AbstractDetailScreen {
 
         grid.addComponent(new Label("Status"), 0, row);
         grid.addComponent(cmbStatus = new ComboBox<>(), 1, row, 2, row++);
-
-        /**
-         * Create Combobox Data
-         */
-        hComboBox = new Hashtable<>();
-        hComboBox.put("1", new ComboBoxComponent("1", "Aktif"));
-        hComboBox.put("0", new ComboBoxComponent("0", "Tidak Aktif"));
-        cmbStatus.setItems(hComboBox.values());
-        cmbStatus.setItemCaptionGenerator(ComboBoxComponent::getCaption);
+        createComboBoxData();
 
         layout.addComponent(grid);
 
         return layout;
     }
 
+    private void createComboBoxData() {
+        /**
+         * Create Combobox Data
+         */
+        hItem = new Hashtable<>();
+        hItem.put("1", new ItemComponent("1", "Aktif"));
+        hItem.put("0", new ItemComponent("0", "Tidak Aktif"));
+        cmbStatus.setItems(hItem.values());
+        cmbStatus.setItemCaptionGenerator(ItemComponent::getCaption);
+    }
+
     @Override
     public void setModeNew() {
+        doReset();
         txtUsername.setEnabled(true);
         txtName.setEnabled(true);
         txtEmail.setEnabled(true);
@@ -244,7 +246,7 @@ public class UserView extends AbstractDetailScreen {
                 txtPasswordConfirm.setValue(pojoUser.getPassword());
                 txtTglAwal.setValueDate(pojoUser.getStartTime());
                 txtTglAkhir.setValueDate(pojoUser.getEndTime());
-                cmbStatus.setSelectedItem(hComboBox.get(pojoUser.getStatus()));
+                cmbStatus.setSelectedItem(hItem.get(pojoUser.getStatus()));
             } else {
                 NotificationHelper.showNotification(Constants.APP_MESSAGE.INFO_DATA_NOT_EXIST);
                 doCancel();

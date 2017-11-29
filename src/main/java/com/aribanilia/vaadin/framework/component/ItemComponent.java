@@ -4,11 +4,11 @@
 
 package com.aribanilia.vaadin.framework.component;
 
-public class ComboBoxComponent {
+public class ItemComponent {
     private String caption;
     private Object value;
 
-    public ComboBoxComponent(Object value, String caption) {
+    public ItemComponent(Object value, String caption) {
         this.caption = caption;
         this.value = value;
     }

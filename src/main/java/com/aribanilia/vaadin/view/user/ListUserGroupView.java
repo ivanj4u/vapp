@@ -4,7 +4,7 @@
 
 package com.aribanilia.vaadin.view.user;
 
-import com.aribanilia.vaadin.entity.TblUserGroup;
+import com.aribanilia.vaadin.container.JoinUserGroup;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @UIScope
@@ -36,12 +37,13 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
 
     private TextField txtGroupId, txtUsername;
     private AbstractDetailScreen detailScreen;
-    private List<TblUserGroup> list;
-    private Grid<TblUserGroup> table;
+    private List<JoinUserGroup> list;
+    private Grid<JoinUserGroup> table;
 
-    private final String USERNAME = "Id Group";
+    private final String GROUP_ID = "Id Group";
     private final String GROUP_NAME = "Nama Group";
-    private final String NAME = "Id Pengguna";
+    private final String USERNAME = "Id Pengguna";
+    private final String NAME = "Nama Pengguna";
 
     private static final Logger logger = LoggerFactory.getLogger(ListUserGroupView.class);
 
@@ -56,6 +58,17 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
     }
 
     @Override
+    protected void beforeInitComponent() {
+        list = new ArrayList<>();
+
+        table = new Grid<>();
+        table.setWidth("100%");
+        table.addStyleName(ValoTheme.TABLE_COMPACT);
+        table.setSelectionMode(Grid.SelectionMode.SINGLE);
+        table.addItemClickListener(event -> setRowId(event.getItem()));
+    }
+
+    @Override
     protected void initGridComponent() {
         Label lbl = new Label("Id Group");
         lbl.setWidth("100px");
@@ -66,24 +79,23 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
     }
 
     @Override
-    protected Component initTableData() {
-        table = new Grid<>();
-        table.setWidth("100%");
-        table.addStyleName(ValoTheme.TABLE_COMPACT);
-        table.setSelectionMode(Grid.SelectionMode.SINGLE);
-        table.addItemClickListener(event -> setRowId(event.getItem()));
-
-        table.addColumn(TblUserGroup::getGroupId).setCaption(USERNAME);
-        table.addColumn(TblUserGroup::getUsername).setCaption(NAME);
-
+    protected Component getTableData() {
         return table;
+    }
+
+    @Override
+    protected void initTableData() {
+        table.addColumn(JoinUserGroup::getGroup_groupId).setCaption(GROUP_ID);
+        table.addColumn(JoinUserGroup::getGroup_groupName).setCaption(GROUP_NAME);
+        table.addColumn(JoinUserGroup::getUser_username).setCaption(USERNAME);
+        table.addColumn(JoinUserGroup::getUser_name).setCaption(NAME);
     }
 
     @Override
     protected AbstractDetailScreen getDetailScreen() {
         if (detailScreen == null) {
             try {
-//                detailScreen = applicationContext.getBean(UserGroupView.class);
+                detailScreen = applicationContext.getBean(UserGroupView.class);
                 detailScreen.setListener(this);
             } catch (Exception e) {
                 logger.error(e.getMessage());
@@ -111,7 +123,7 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
     @Override
     protected void doSearch() {
         try {
-            list = servicesUserGroup.getUserGroup(txtGroupId.getValue(), txtUsername.getValue());
+            list = servicesUserGroup.searchUserGroup(txtGroupId.getValue(), txtUsername.getValue());
             table.setItems(list);
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,19 +132,10 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
     }
 
     @Override
-    public void onAfterAdded(Object pojo) {
-        super.onAfterAdded(pojo);
-        if (pojo != null) {
-            list.add((TblUserGroup) pojo);
-            table.setItems(list);
-        }
-    }
-
-    @Override
     protected void doReset() {
         txtGroupId.setValue("");
         txtUsername.setValue("");
-        list = null;
+        list.clear();
         table.setItems(list);
     }
 

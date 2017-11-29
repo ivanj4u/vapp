@@ -19,12 +19,17 @@ public class TblMenu implements Serializable {
     private String menuId;
     @Column(name = "menu_name")
     private String menuName;
-    @Column(name = "menu_class", nullable = false)
+    @Column(name = "menu_class")
     private String menuClass;
     @Column(name = "position", length = 5)
     private Long position;
     @Column(name = "param", length = 200)
     private String param;
+    @Column(name = "parent_id", length = 100, nullable = false)
+    private String parentId;
+
+    @Column(name = "have_child", length = 1, nullable = false)
+    private String haveChild;
 
     public TblMenu() {
     }
@@ -68,4 +73,21 @@ public class TblMenu implements Serializable {
     public void setParam(String param) {
         this.param = param;
     }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getHaveChild() {
+        return haveChild;
+    }
+
+    public void setHaveChild(String haveChild) {
+        this.haveChild = haveChild;
+    }
+
 }

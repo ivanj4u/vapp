@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.Hashtable;
 
 
 @SuppressWarnings("deprecation")
@@ -35,13 +36,19 @@ public class MenuComponent extends CustomComponent {
     // Component Menu
     private CssLayout menuItemsLayout;
     private MenuBar settings;
+    private Hashtable<String, MenuBar.MenuItem> hMenu;
 
-    public static final String ID = "menu";
+    private static final String ID = "menu";
     private static final String STYLE_VISIBLE = "valo-menu-visible";
     private static final Logger logger = LoggerFactory.getLogger(MenuComponent.class);
 
     @PostConstruct
     public void init() {
+        // Create Component
+        hMenu = new Hashtable<>();
+        settings = new MenuBar();
+        settings.addStyleName("user-menu");
+
         if (getCurrentUser() != null) {
             setPrimaryStyleName("valo-menu");
             setId(ID);
@@ -61,17 +68,13 @@ public class MenuComponent extends CustomComponent {
 
         menuContent.addComponent(buildTitle());
 
-        if (settings == null) {
-            settings = new MenuBar();
-            settings.addStyleName("user-menu");
-        }
         menuContent.addComponent(settings);
 
         menuContent.addComponent(buildToggleButton());
 
         if (menuItemsLayout == null) {
             menuItemsLayout = new CssLayout();
-            menuItemsLayout.addStyleName("valo-menuitems");
+//            menuItemsLayout.addStyleName(ValoTheme.MENU_ITEM);
         }
         menuContent.addComponent(menuItemsLayout);
 
@@ -84,7 +87,7 @@ public class MenuComponent extends CustomComponent {
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
         logoWrapper.setComponentAlignment(logo, Alignment.MIDDLE_CENTER);
-        logoWrapper.addStyleName("valo-menu-title");
+        logoWrapper.addStyleName(ValoTheme.MENU_TITLE);
         logoWrapper.setSpacing(false);
         return logoWrapper;
     }
@@ -108,9 +111,7 @@ public class MenuComponent extends CustomComponent {
                 Notification.show("Preferences Clicked");
             });
             settingsItem.addSeparator();
-            settingsItem.addItem(Constants.CAPTION_MESSAGE.MENU_ITEM_LOGOUT, menuItem ->  {
-                doLogout();
-            });
+            settingsItem.addItem(Constants.CAPTION_MESSAGE.MENU_ITEM_LOGOUT, menuItem -> doLogout());
         }
     }
 
@@ -133,13 +134,39 @@ public class MenuComponent extends CustomComponent {
     private void buildMenuItem() {
         if (menuItemsLayout.getComponentCount() == 0) {
             try {
+                hMenu.clear();
                 for (final TblMenu view : menuLoader.getAuthorizedMenu()) {
-                    Button menuItemComponent = new Button();
-                    menuItemComponent.setPrimaryStyleName(ValoTheme.MENU_ITEM);
-                    menuItemComponent.setCaption(view.getMenuName().substring(0, 1).toUpperCase()
-                            + view.getMenuName().substring(1));
-                    menuItemComponent.addClickListener(event -> getUI().getNavigator().navigateTo(MainPage.VIEW_NAME + "/" + view.getMenuId()));
-                    menuItemsLayout.addComponent(menuItemComponent);
+                    MenuBar.MenuItem menuItem;
+                    if (view.getHaveChild().equals("1")) {
+                        if (view.getParentId().equals("0")) {
+                            // Top Parent
+                            MenuBar menuBar = new MenuBar();
+                            menuBar.addStyleName(ValoTheme.MENU_ITEM);
+                            menuBar.addStyleName(ValoTheme.PANEL_BORDERLESS);
+                            menuBar.addStyleName(ValoTheme.MENUBAR_SMALL);
+                            menuItemsLayout.addComponent(menuBar);
+                            menuItem = menuBar.addItem(view.getMenuName(), null, null);
+                        } else {
+                            // Low Parent
+                            menuItem = hMenu.get(view.getParentId()).addItem(view.getMenuName(), null, null);
+                        }
+                        hMenu.put(view.getMenuId(), menuItem);
+                    } else {
+                        menuItem = hMenu.get(view.getParentId());
+
+                        String caption = view.getMenuName().substring(0, 1).toUpperCase()
+                                + view.getMenuName().substring(1);
+                        menuItem.addItem(caption, selectedItem -> getUI().getNavigator().navigateTo(MainPage.VIEW_NAME + "/" + view.getMenuId()));
+
+                        /**
+                         Button menuItemComponent = new Button();
+                         menuItemComponent.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+                         menuItemComponent.setCaption(view.getMenuName().substring(0, 1).toUpperCase()
+                         + view.getMenuName().substring(1));
+                         menuItemComponent.addClickListener(event -> getUI().getNavigator().navigateTo(MainPage.VIEW_NAME + "/" + view.getMenuId()));
+                         menuItemsLayout.addComponent(menuItemComponent);
+                         */
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

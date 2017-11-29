@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class GroupServices extends AuditTrailServices {
@@ -15,6 +17,17 @@ public class GroupServices extends AuditTrailServices {
     @Autowired private GroupDao daoGroup;
 
     private static final Logger logger = LoggerFactory.getLogger(GroupServices.class);
+
+    public List<TblGroup> queryList() {
+        List<TblGroup> list = null;
+        try {
+            list = daoGroup.findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        return list;
+    }
 
     @Override
     public void save(Object pojo) throws Exception {
