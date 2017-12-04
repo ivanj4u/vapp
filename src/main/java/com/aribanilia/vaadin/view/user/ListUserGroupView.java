@@ -59,8 +59,6 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
 
     @Override
     protected void beforeInitComponent() {
-        list = new ArrayList<>();
-
         table = new Grid<>();
         table.setWidth("100%");
         table.addStyleName(ValoTheme.TABLE_COMPACT);
@@ -95,9 +93,10 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
     protected AbstractDetailScreen getDetailScreen() {
         if (detailScreen == null) {
             try {
-                detailScreen = applicationContext.getBean(UserGroupView.class);
+                detailScreen = applicationContext.getBean(DetailUserGroupView.class);
                 detailScreen.setListener(this);
             } catch (Exception e) {
+                e.printStackTrace();
                 logger.error(e.getMessage());
                 NotificationHelper.showNotification(Constants.APP_MESSAGE.ERR_DATA_GET_DETAIL);
             }
@@ -123,11 +122,12 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
     @Override
     protected void doSearch() {
         try {
-            list = servicesUserGroup.searchUserGroup(txtGroupId.getValue(), txtUsername.getValue());
+            list = servicesUserGroup.getJoinUserGroup(txtGroupId.getValue(), txtUsername.getValue());
             table.setItems(list);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());
+            NotificationHelper.showNotification(Constants.APP_MESSAGE.ERR_DATA_SEARCH);
         }
     }
 

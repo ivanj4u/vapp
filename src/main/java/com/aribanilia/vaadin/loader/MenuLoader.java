@@ -19,8 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
 @SpringComponent
 public class MenuLoader {
@@ -64,9 +65,9 @@ public class MenuLoader {
         Vector<TblMenu> vTemp = new Vector<>();
         try {
 
-            List<TblUserGroup> userGroups = servicesUserGroup.getUserGroup(user.getUsername());
+            List<TblUserGroup> userGroups = servicesUserGroup.getUserGroupByUsername(user.getUsername());
             for (TblUserGroup userGroup : userGroups) {
-                List<TblPriviledge> priviledges = servicesPriviledge.getGroupPriviledge(userGroup.getGroupId());
+                List<TblPriviledge> priviledges = servicesPriviledge.getGroupPriviledge(String.valueOf(userGroup.getGroupId()));
                 for (TblPriviledge p : priviledges) {
                     TblPriviledge privPrev = hSessionedMenuperUser.get(p.getMenuId());
                     if (privPrev != null) {

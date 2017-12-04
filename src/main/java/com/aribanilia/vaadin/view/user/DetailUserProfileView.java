@@ -4,5 +4,5 @@
 
 package com.aribanilia.vaadin.view.user;
 
-public class UserProfileView {
+public class DetailUserProfileView {
 }

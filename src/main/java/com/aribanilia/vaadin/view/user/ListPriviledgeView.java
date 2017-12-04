@@ -4,12 +4,12 @@
 
 package com.aribanilia.vaadin.view.user;
 
-import com.aribanilia.vaadin.entity.TblUser;
+import com.aribanilia.vaadin.entity.TblUserGroup;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
 import com.aribanilia.vaadin.framework.impl.AbstractSearchScreen;
-import com.aribanilia.vaadin.service.UserServices;
+import com.aribanilia.vaadin.service.UserGroupServices;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -23,28 +23,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @UIScope
 @SpringView
-public class ListUserView extends AbstractSearchScreen implements View {
-    @Autowired
-    private UserServices servicesUser;
-    @Autowired
-    private ApplicationContext applicationContext;
+public class ListPriviledgeView extends AbstractSearchScreen implements View {
+    @Autowired private UserGroupServices servicesUserGroup;
+    @Autowired private ApplicationContext applicationContext;
 
-    private TextField txtUsername, txtName;
+    private TextField txtGroupId;
     private AbstractDetailScreen detailScreen;
-    private List<TblUser> list;
-    private Grid<TblUser> table;
+    private List<TblUserGroup> list;
+    private Grid<TblUserGroup> table;
 
-    private final String USERNAME = "Id Pengguna";
-    private final String NAME = "Nama";
-    private final String EMAIL = "Email";
-    private final String TELP = "No Telp";
+    private final String GROUP_ID = "Id Group";
+    private final String GROUP_NAME = "Nama Group";
 
-    private static final Logger logger = LoggerFactory.getLogger(ListUserView.class);
+    private static final Logger logger = LoggerFactory.getLogger(ListPriviledgeView.class);
 
     @Override
     protected void beforeInitComponent() {
@@ -67,12 +62,11 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected void initGridComponent() {
-        Label lbl = new Label("Id Pengguna");
-        lbl.setWidth("100px");
+        Label lbl = new Label("Id Group");
+        lbl.setWidth("110px");
+
         grid.addComponent(lbl, 0, row);
-        grid.addComponent(txtUsername = new TextField(),1, row++);
-        grid.addComponent(new Label("Nama"), 0, row);
-        grid.addComponent(txtName = new TextField(),1, row++);
+        grid.addComponent(txtGroupId = new TextField(), 1, row++);
     }
 
     @Override
@@ -82,17 +76,15 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected void initTableData() {
-        table.addColumn(TblUser::getUsername).setCaption(USERNAME);
-        table.addColumn(TblUser::getName).setCaption(NAME);
-        table.addColumn(TblUser::getEmail).setCaption(EMAIL);
-        table.addColumn(TblUser::getPhone).setCaption(TELP);
+        table.addColumn(TblUserGroup::getGroupId).setCaption(GROUP_ID);
+        table.addColumn(TblUserGroup::getUsername).setCaption(GROUP_NAME);
     }
 
     @Override
     protected AbstractDetailScreen getDetailScreen() {
         if (detailScreen == null) {
             try {
-                detailScreen = applicationContext.getBean(DetailUserView.class);
+                detailScreen = applicationContext.getBean(DetailPriviledgeView.class);
                 detailScreen.setListener(this);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -105,7 +97,7 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected String getDetailScreenTitle() {
-        return "Pendaftaran Pengguna";
+        return "Pengaturan Group";
     }
 
     @Override
@@ -115,13 +107,13 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected String getDetailScreenHeight() {
-        return "80%";
+        return "95%";
     }
 
     @Override
     protected void doSearch() {
         try {
-            list = servicesUser.queryList(txtUsername.getValue(), txtName.getValue());
+            list = servicesUserGroup.getUserGroupByGroupId(txtGroupId.getValue());
             table.setItems(list);
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,34 +123,8 @@ public class ListUserView extends AbstractSearchScreen implements View {
     }
 
     @Override
-    public void onAfterAdded(Object pojo) {
-        super.onAfterAdded(pojo);
-        if (pojo != null) {
-            list.add((TblUser) pojo);
-            table.setItems(list);
-        }
-    }
-
-    @Override
-    public void onAfterUpdated(Object pojo) {
-        super.onAfterUpdated(pojo);
-        if (pojo != null) {
-            TblUser userBaru = (TblUser) pojo;
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getUsername().equals(userBaru.getUsername())) {
-                    list.remove(i);
-                    list.add(userBaru);
-                    break;
-                }
-            }
-            table.setItems(list);
-        }
-    }
-
-    @Override
     protected void doReset() {
-        txtName.setValue("");
-        txtUsername.setValue("");
+        txtGroupId.setValue("");
         list.clear();
         table.setItems(list);
     }
@@ -167,5 +133,4 @@ public class ListUserView extends AbstractSearchScreen implements View {
     protected boolean validateSearchRequired() {
         return true;
     }
-
 }

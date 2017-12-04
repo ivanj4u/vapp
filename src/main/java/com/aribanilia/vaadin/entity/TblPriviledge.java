@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "tbl_priviledge", schema = "vaadin")
 @IdClass(TblPriviledgeId.class)
-public class TblPriviledge extends AuditTrail implements Serializable {
+public class TblPriviledge implements Serializable {
 
     @Id
     @Column(name = "group_id", nullable = false)

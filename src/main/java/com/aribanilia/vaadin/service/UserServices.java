@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,7 +58,7 @@ public class UserServices extends AuditTrailServices {
     }
 
     public List<TblUser> queryList(String username, String name) throws Exception {
-        List<TblUser> list = null;
+        List<TblUser> list = new ArrayList<>();
         try {
             if (ValidationHelper.validateValueNotNull(username) && ValidationHelper.validateValueNotNull(name)) {
                 list = daoUser.queryTblUsersByUsernameEqualsAndNameIsLike(username, ("%" + name + "%"));

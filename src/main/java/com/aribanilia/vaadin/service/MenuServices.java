@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class MenuServices {
     }
 
     public List<TblMenu> getAllMenu() {
-        List<TblMenu> list = null;
+        List<TblMenu> list = new ArrayList<>();
         try {
             list = daoMenu.findAll();
         } catch (Exception e) {

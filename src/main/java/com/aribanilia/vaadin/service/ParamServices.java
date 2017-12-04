@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,7 +23,7 @@ public class ParamServices {
     private static final Logger logger = LoggerFactory.getLogger(ParamServices.class);
 
     public List<TblParam> getList() throws Exception {
-        List<TblParam> list = null;
+        List<TblParam> list = new ArrayList<>();
         try {
             list = daoParam.findAll();
         } catch (Exception e) {

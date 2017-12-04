@@ -15,10 +15,10 @@ public interface UserGroupDao extends CrudRepository<TblUserGroup, TblUserGroupI
     @Override
     List<TblUserGroup> findAll();
 
-    List<TblUserGroup> findByGroupId(String groupId);
+    List<TblUserGroup> findByGroupId(Long groupId);
 
     List<TblUserGroup> findByUsername(String username);
 
-    List<TblUserGroup> findByGroupIdAndUsername(String groupId, String username);
+    List<TblUserGroup> findByGroupIdAndUsername(Long groupId, String username);
 
 }

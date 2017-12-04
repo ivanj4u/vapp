@@ -31,7 +31,7 @@ import java.util.Set;
 
 @SpringComponent
 @UIScope
-public class UserGroupView extends AbstractDetailScreen {
+public class DetailUserGroupView extends AbstractDetailScreen {
     @Autowired private UserGroupServices servicesUserGroup;
     @Autowired private UserServices servicesUser;
     @Autowired private GroupServices servicesGroup;
@@ -43,7 +43,7 @@ public class UserGroupView extends AbstractDetailScreen {
 
     private TblUser pojoUser;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserGroupView.class);
+    private static final Logger logger = LoggerFactory.getLogger(DetailUserGroupView.class);
 
     @Override
     protected void initComponents() {
@@ -97,7 +97,7 @@ public class UserGroupView extends AbstractDetailScreen {
     private void createSelectGroupData() {
         hItem = new Hashtable<>();
         try {
-            List<TblGroup> groups = servicesGroup.queryList();
+            List<TblGroup> groups = servicesGroup.getAllGroup();
             if (groups != null && groups.size() > 0) {
                 for (TblGroup group : groups
                      ) {
@@ -219,7 +219,7 @@ public class UserGroupView extends AbstractDetailScreen {
         try {
             JoinUserGroup join = pojo != null ? ((JoinUserGroup) pojo) : null;
             if (join != null) {
-                listUserGroup = servicesUserGroup.getUserGroup(join.getUserGroup_username());
+                listUserGroup = servicesUserGroup.getUserGroupByUsername(join.getUserGroup_username());
                 txtUsername.setValue(join.getUserGroup_username());
                 doSearchUser(join.getUserGroup_username());
                 for (TblUserGroup userGroup : listUserGroup

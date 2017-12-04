@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,8 +19,19 @@ public class GroupServices extends AuditTrailServices {
 
     private static final Logger logger = LoggerFactory.getLogger(GroupServices.class);
 
-    public List<TblGroup> queryList() {
-        List<TblGroup> list = null;
+    public TblGroup getGroup(String groupId) {
+        TblGroup group = null;
+        try {
+            group = daoGroup.findOne(new Long(groupId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        return group;
+    }
+
+    public List<TblGroup> getAllGroup() {
+        List<TblGroup> list = new ArrayList<>();
         try {
             list = daoGroup.findAll();
         } catch (Exception e) {

@@ -30,25 +30,12 @@ public class UserGroupServices {
 
     private static final Logger logger = LoggerFactory.getLogger(UserGroupServices.class);
 
-    public List<TblUserGroup> getUserGroup(String username) throws Exception {
-        List<TblUserGroup> list = null;
+
+    public List<TblUserGroup> getUserGroupByGroupId(String groupId) throws Exception {
+        List<TblUserGroup> list = new ArrayList<>();
         try {
-            list = daoUserGroup.findByUsername(username);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-        }
-        return list;
-    }
-    public List<TblUserGroup> getUserGroup(String groupId, String username) throws Exception {
-        List<TblUserGroup> list = null;
-        try {
-            if (ValidationHelper.validateValueNotNull(username) && ValidationHelper.validateValueNotNull(groupId)) {
-                list = daoUserGroup.findByGroupIdAndUsername(groupId, username);
-            } else if (ValidationHelper.validateValueNotNull(username)) {
-                list = daoUserGroup.findByUsername(username);
-            } else if (ValidationHelper.validateValueNotNull(username)) {
-                list = daoUserGroup.findByGroupId(groupId);
+            if (ValidationHelper.validateValueNotNull(groupId)) {
+                list = daoUserGroup.findByGroupId(new Long(groupId));
             } else {
                 list = daoUserGroup.findAll();
             }
@@ -59,7 +46,41 @@ public class UserGroupServices {
         return list;
     }
 
-    public List<JoinUserGroup> searchUserGroup(String groupId, String username) throws Exception {
+    public List<TblUserGroup> getUserGroupByUsername(String username) throws Exception {
+        List<TblUserGroup> list = new ArrayList<>();
+        try {
+            if (ValidationHelper.validateValueNotNull(username)) {
+                list = daoUserGroup.findByUsername(username);
+            } else {
+                list = daoUserGroup.findAll();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        return list;
+    }
+
+    public List<TblUserGroup> getUserGroup(String groupId, String username) throws Exception {
+        List<TblUserGroup> list = new ArrayList<>();
+        try {
+            if (ValidationHelper.validateValueNotNull(username) && ValidationHelper.validateValueNotNull(groupId)) {
+                list = daoUserGroup.findByGroupIdAndUsername(new Long(groupId), username);
+            } else if (ValidationHelper.validateValueNotNull(username)) {
+                list = daoUserGroup.findByUsername(username);
+            } else if (ValidationHelper.validateValueNotNull(groupId)) {
+                list = daoUserGroup.findByGroupId(new Long(groupId));
+            } else {
+                list = daoUserGroup.findAll();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        return list;
+    }
+
+    public List<JoinUserGroup> getJoinUserGroup(String groupId, String username) throws Exception {
         List<JoinUserGroup> list = new ArrayList<>();
         try {
             List<TblUserGroup> userGroups = getUserGroup(groupId, username);
@@ -75,11 +96,21 @@ public class UserGroupServices {
         return list;
     }
 
-    public void save(TblUserGroup userGroup) {
-        daoUserGroup.save(userGroup);
+    public void save(TblUserGroup userGroup) throws Exception {
+        try {
+            daoUserGroup.save(userGroup);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
     }
 
-    public void delete(TblUserGroup userGroup) {
-        daoUserGroup.delete(userGroup);
+    public void delete(TblUserGroup userGroup) throws Exception {
+        try {
+            daoUserGroup.delete(userGroup);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
     }
 }

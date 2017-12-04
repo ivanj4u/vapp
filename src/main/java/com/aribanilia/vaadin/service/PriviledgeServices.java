@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,14 +22,32 @@ public class PriviledgeServices {
 
     private static Logger logger = LoggerFactory.getLogger(PriviledgeServices.class);
 
-    public List<TblPriviledge> getGroupPriviledge(Long groupId) throws Exception {
-        List<TblPriviledge> list = null;
+    public List<TblPriviledge> getGroupPriviledge(String groupId) throws Exception {
+        List<TblPriviledge> list = new ArrayList<>();
         try {
-            list = daoPriviledge.findByGroupId(groupId);
+            list = daoPriviledge.findByGroupId(new Long(groupId));
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());
         }
         return list;
+    }
+
+    public void save(TblPriviledge priviledge) throws Exception {
+        try {
+            daoPriviledge.save(priviledge);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+    }
+
+    public void delete(TblPriviledge priviledge) throws Exception {
+        try {
+            daoPriviledge.delete(priviledge);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
     }
 }

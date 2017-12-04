@@ -24,7 +24,7 @@ import java.util.Hashtable;
 
 @SpringComponent
 @UIScope
-public class UserView extends AbstractDetailScreen {
+public class DetailUserView extends AbstractDetailScreen {
     @Autowired private UserServices servicesUser;
 
     private TextField txtUsername, txtName, txtEmail, txtPhone;
@@ -34,7 +34,7 @@ public class UserView extends AbstractDetailScreen {
     private Hashtable<Object, ItemComponent> hItem;
     private TblUser pojoUser;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserView.class);
+    private static final Logger logger = LoggerFactory.getLogger(DetailUserView.class);
 
     @Override
     protected void initComponents() {
