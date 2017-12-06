@@ -39,6 +39,8 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
     private TreeGrid<TreeMenuContainer> tree;
     private Hashtable<String, TreeMenuContainer> hMenu;
     private TreeMenuContainer selectedItem;
+    private Window wMenuContainerView;
+    private DetailMenuContainerView menuContainerView;
 
     private static final Logger logger = LoggerFactory.getLogger(DetailPriviledgeView.class);
 
@@ -130,9 +132,39 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
     }
 
     private void showMenuContainerWindow() {
-
-
-
+        if (selectedItem == null) {
+            NotificationHelper.showNotification(Constants.APP_MESSAGE.WARN_DATA_MUST_BE_SELECTED);
+            return;
+        }
+        if (menuContainerView == null) {
+            try {
+                menuContainerView = new DetailMenuContainerView(selectedItem, result -> {
+                    getUI().removeWindow(wMenuContainerView);
+                    TreeMenuContainer menuContainer = (TreeMenuContainer) result;
+                    /**
+                     * Remove old menu
+                     */
+                    TreeDataProvider<TreeMenuContainer> dataProvider = (TreeDataProvider<TreeMenuContainer>) tree.getDataProvider();
+                    TreeData<TreeMenuContainer> treeData = dataProvider.getTreeData();
+                    treeData.removeItem(hMenu.get(menuContainer.getMenuId()));
+                    /**
+                     * Put new menu
+                     */
+                    hMenu.put(menuContainer.getMenuId(), menuContainer);
+                    treeData.addItem(menuContainer.getParentMenu(), menuContainer);
+                    dataProvider.refreshAll();
+                });
+                wMenuContainerView = new Window();
+                wMenuContainerView.setContent(menuContainerView);
+                wMenuContainerView.setModal(true);
+                wMenuContainerView.setWidth("55%");
+                wMenuContainerView.setHeight("45%");
+                wMenuContainerView.addStyleName(ValoTheme.PANEL_WELL);
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error(e.getMessage());
+            }
+        }
     }
 
     @Override

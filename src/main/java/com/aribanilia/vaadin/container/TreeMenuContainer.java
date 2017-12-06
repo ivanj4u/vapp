@@ -4,8 +4,6 @@
 
 package com.aribanilia.vaadin.container;
 
-import com.vaadin.ui.CheckBox;
-
 public class TreeMenuContainer {
     private String menuId;
     private String menuName;
