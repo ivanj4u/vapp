@@ -165,6 +165,7 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
                 logger.error(e.getMessage());
             }
         }
+        getUI().addWindow(wMenuContainerView);
     }
 
     @Override
