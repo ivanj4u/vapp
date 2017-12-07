@@ -40,6 +40,8 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
 
         layout.addComponent(initPencarian());
         layout.addComponent(initResult());
+        layout.setExpandRatio(layout.getComponent(0), 0.5f);
+        layout.setExpandRatio(layout.getComponent(1), 1.0f);
 
         setContent(layout);
         Responsive.makeResponsive(this);
