@@ -6,8 +6,7 @@ package com.aribanilia.vaadin.framework.impl;
 
 import com.aribanilia.vaadin.framework.listener.DetailCallbackListener;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 @UIScope
@@ -30,6 +29,18 @@ public abstract class AbstractDetailScreen extends AbstractScreen {
         this.listener = listener;
     }
 
+    @Override
+    protected void initComponents() {
+        VerticalLayout layout = new VerticalLayout();
+
+        initButton();
+        layout.addComponent(initDetail());
+        layout.addComponent(buttonBar);
+        layout.setComponentAlignment(buttonBar, Alignment.MIDDLE_CENTER);
+
+        setContent(layout);
+    }
+
     protected void initButton() {
         buttonBar = new HorizontalLayout();
         buttonBar.setSpacing(true);
@@ -46,6 +57,7 @@ public abstract class AbstractDetailScreen extends AbstractScreen {
             listener.onCancel();
     }
 
+    protected abstract Component initDetail();
     protected abstract void doSave();
     protected abstract boolean doValidate();
     protected abstract void doReset();

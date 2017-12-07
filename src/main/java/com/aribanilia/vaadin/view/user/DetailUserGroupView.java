@@ -46,17 +46,7 @@ public class DetailUserGroupView extends AbstractDetailScreen {
     private static final Logger logger = LoggerFactory.getLogger(DetailUserGroupView.class);
 
     @Override
-    protected void initComponents() {
-        VerticalLayout layout = new VerticalLayout();
-
-        initButton();
-        layout.addComponent(initDetail());
-        layout.addComponent(buttonBar);
-        layout.setComponentAlignment(buttonBar, Alignment.MIDDLE_CENTER);
-        setContent(layout);
-    }
-
-    private Component initDetail() {
+    protected Component initDetail() {
         VerticalLayout layout = new VerticalLayout();
         layout.addStyleName(ValoTheme.PANEL_WELL);
 

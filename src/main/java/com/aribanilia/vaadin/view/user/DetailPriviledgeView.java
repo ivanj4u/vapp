@@ -14,6 +14,7 @@ import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
 import com.aribanilia.vaadin.service.GroupServices;
 import com.aribanilia.vaadin.service.MenuServices;
 import com.aribanilia.vaadin.service.PriviledgeServices;
+import com.aribanilia.vaadin.util.ValidationHelper;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -50,6 +51,9 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
 
     @Override
     protected void doSave() {
+        if (!doValidate())
+            return;
+
         try {
             if (getMode() == Constants.APP_MODE.MODE_NEW) {
                 /**
@@ -114,6 +118,11 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
 
     @Override
     protected boolean doValidate() {
+        if (ValidationHelper.validateRequired(txtGroupId)
+                && ValidationHelper.validateRequired(txtGroupName))
+            return true;
+
+        NotificationHelper.showNotification(Constants.APP_MESSAGE.WARN_DATA_MANDATORY);
         return false;
     }
 
@@ -151,18 +160,7 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
     }
 
     @Override
-    protected void initComponents() {
-        VerticalLayout layout = new VerticalLayout();
-
-        initButton();
-        layout.addComponent(initDetail());
-        layout.addComponent(buttonBar);
-        layout.setComponentAlignment(buttonBar, Alignment.MIDDLE_CENTER);
-
-        setContent(layout);
-    }
-
-    private Component initDetail() {
+    protected Component initDetail() {
         VerticalLayout layout = new VerticalLayout();
         layout.addStyleName(ValoTheme.PANEL_WELL);
 

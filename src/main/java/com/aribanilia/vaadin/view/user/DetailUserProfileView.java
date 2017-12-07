@@ -80,18 +80,7 @@ public class DetailUserProfileView extends AbstractDetailScreen {
     }
 
     @Override
-    protected void initComponents() {
-        VerticalLayout layout = new VerticalLayout();
-
-        initButton();
-        layout.addComponent(initDetail());
-        layout.addComponent(buttonBar);
-        layout.setComponentAlignment(buttonBar, Alignment.MIDDLE_CENTER);
-
-        setContent(layout);
-    }
-
-    private Component initDetail() {
+    protected Component initDetail() {
         VerticalLayout layout = new VerticalLayout();
         GridLayout grid = new GridLayout(2, 4);
         int row = 0;
