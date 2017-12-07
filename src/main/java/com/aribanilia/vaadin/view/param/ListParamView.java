@@ -20,6 +20,7 @@ import com.vaadin.ui.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,10 @@ import java.util.List;
 public class ListParamView extends AbstractSearchScreen implements View {
 
     @Autowired private ParamServices servicesParam;
+    @Autowired private ApplicationContext applicationContext;
 
     private TextField txtKey;
+    private AbstractDetailScreen detailScreen;
     private Grid<TblParam> table;
     private List<TblParam> list;
 
@@ -74,7 +77,17 @@ public class ListParamView extends AbstractSearchScreen implements View {
 
     @Override
     protected AbstractDetailScreen getDetailScreen() {
-        return null;
+        if (detailScreen == null) {
+            try {
+                detailScreen = applicationContext.getBean(DetailParamView.class);
+                detailScreen.setListener(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error(e.getMessage());
+                NotificationHelper.showNotification(Constants.APP_MESSAGE.ERR_DATA_GET_DETAIL);
+            }
+        }
+        return detailScreen;
     }
 
     @Override
@@ -84,12 +97,12 @@ public class ListParamView extends AbstractSearchScreen implements View {
 
     @Override
     protected String getDetailScreenWidth() {
-        return "50%";
+        return "45%";
     }
 
     @Override
     protected String getDetailScreenHeight() {
-        return "65%";
+        return "60%";
     }
 
     @Override
