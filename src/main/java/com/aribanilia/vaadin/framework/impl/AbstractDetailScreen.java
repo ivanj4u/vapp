@@ -5,13 +5,11 @@
 package com.aribanilia.vaadin.framework.impl;
 
 import com.aribanilia.vaadin.framework.listener.DetailCallbackListener;
-import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-@SpringComponent
 @UIScope
 public abstract class AbstractDetailScreen extends AbstractScreen {
 

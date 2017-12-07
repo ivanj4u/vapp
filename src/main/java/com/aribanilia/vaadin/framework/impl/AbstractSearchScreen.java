@@ -163,7 +163,6 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
         }
         getUI().addWindow(windowDetail);
         windowDetail.center();
-        getDetailScreen().show();
     }
 
     protected boolean getModality() {

@@ -7,9 +7,13 @@ package com.aribanilia.vaadin.framework.component;
 import com.aribanilia.vaadin.entity.TblMenu;
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.framework.constants.Constants;
+import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
+import com.aribanilia.vaadin.framework.listener.DetailCallbackListener;
 import com.aribanilia.vaadin.framework.page.LoginPage;
 import com.aribanilia.vaadin.framework.page.MainPage;
 import com.aribanilia.vaadin.loader.MenuLoader;
+import com.aribanilia.vaadin.view.user.DetailUserPasswordView;
+import com.aribanilia.vaadin.view.user.DetailUserProfileView;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
@@ -21,6 +25,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.Hashtable;
@@ -32,11 +37,17 @@ import java.util.Hashtable;
 public class MenuComponent extends CustomComponent {
     @Autowired
     private MenuLoader menuLoader;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     // Component Menu
     private CssLayout menuItemsLayout;
     private MenuBar settings;
     private Hashtable<String, MenuBar.MenuItem> hMenu;
+
+    private Window wPassword, wProfile;
+    private AbstractDetailScreen passwordScreen, profileScreen;
+    private DetailCallbackListener listener;
 
     private static final String ID = "menu";
     private static final String STYLE_VISIBLE = "valo-menu-visible";
@@ -54,6 +65,30 @@ public class MenuComponent extends CustomComponent {
             setId(ID);
             setSizeUndefined();
             setCompositionRoot(buildContent());
+
+            listener = new DetailCallbackListener() {
+
+                @Override
+                public void onAfterAdded(Object pojo) {
+
+                }
+
+                @Override
+                public void onAfterUpdated(Object pojo) {
+                    Boolean isPassword = (Boolean) pojo;
+                    closeScreen(isPassword);
+                }
+
+                @Override
+                public void onAfterViewed() {
+
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+            };
         }
     }
 
@@ -103,15 +138,56 @@ public class MenuComponent extends CustomComponent {
             MenuBar.MenuItem settingsItem = settings.addItem("",
                     new ThemeResource(imgSource), null);
             settingsItem.addItem(Constants.CAPTION_MESSAGE.MENU_ITEM_PROFILE, menuItem ->  {
-//                ProfilePreferencesWindow.open(user, false);
-                Notification.show("Edit Profile Clicked");
+                showProfileScreen();
             });
             settingsItem.addItem(Constants.CAPTION_MESSAGE.MENU_ITEM_PASSWORD, menuItem ->  {
-//                ProfilePreferencesWindow.open(user, true);
-                Notification.show("Preferences Clicked");
+                showPasswordScreen();
             });
             settingsItem.addSeparator();
             settingsItem.addItem(Constants.CAPTION_MESSAGE.MENU_ITEM_LOGOUT, menuItem -> doLogout());
+        }
+    }
+
+    private void showPasswordScreen() {
+        if (wPassword == null) {
+            wPassword = new Window("Ubah Password");
+            if (passwordScreen == null) {
+                passwordScreen = applicationContext.getBean(DetailUserPasswordView.class);
+            }
+            passwordScreen.setListener(listener);
+            wPassword.setContent(passwordScreen);
+            passwordScreen.setSizeFull();
+            wPassword.setModal(true);
+            wPassword.setWidth("55%");
+            wPassword.setHeight("65%");
+        }
+        getUI().addWindow(wPassword);
+        wPassword.center();
+    }
+
+    private void showProfileScreen() {
+        if (wProfile == null) {
+            wProfile = new Window("Ubah Profile");
+            if (profileScreen == null) {
+                profileScreen = applicationContext.getBean(DetailUserProfileView.class);
+            }
+            profileScreen.setListener(listener);
+            profileScreen.setSizeFull();
+            profileScreen.setModeNew();
+            wProfile.setContent(profileScreen);
+            wProfile.setModal(true);
+            wProfile.setWidth("45%");
+            wProfile.setHeight("65%");
+        }
+        getUI().addWindow(wProfile);
+        wProfile.center();
+    }
+
+    private void closeScreen(boolean isPassword) {
+        if (isPassword) {
+            getUI().removeWindow(wPassword);
+        } else {
+            getUI().removeWindow(wProfile);
         }
     }
 
@@ -157,15 +233,6 @@ public class MenuComponent extends CustomComponent {
                         String caption = view.getMenuName().substring(0, 1).toUpperCase()
                                 + view.getMenuName().substring(1);
                         menuItem.addItem(caption, selectedItem -> getUI().getNavigator().navigateTo(MainPage.VIEW_NAME + "/" + view.getMenuId()));
-
-                        /**
-                         Button menuItemComponent = new Button();
-                         menuItemComponent.setPrimaryStyleName(ValoTheme.MENU_ITEM);
-                         menuItemComponent.setCaption(view.getMenuName().substring(0, 1).toUpperCase()
-                         + view.getMenuName().substring(1));
-                         menuItemComponent.addClickListener(event -> getUI().getNavigator().navigateTo(MainPage.VIEW_NAME + "/" + view.getMenuId()));
-                         menuItemsLayout.addComponent(menuItemComponent);
-                         */
                     }
                 }
             } catch (Exception e) {

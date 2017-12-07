@@ -63,7 +63,7 @@ public class DetailUserView extends AbstractDetailScreen {
         grid.addComponent(new Label("Email"), 0, row);
         grid.addComponent(txtEmail = new TextField(), 1, row, 2, row++);
 
-        grid.addComponent(new Label("Telepon"), 0, row);
+        grid.addComponent(new Label("Phone"), 0, row);
         grid.addComponent(txtPhone = new TextField(), 1, row, 2, row++);
 
         grid.addComponent(new Label("Password"), 0, row);
