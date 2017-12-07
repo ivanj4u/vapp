@@ -154,7 +154,7 @@ public class DetailUserGroupView extends AbstractDetailScreen {
 
     @Override
     protected void doSave() {
-        if (!doValidateRequired() || !doValidateValue()) {
+        if (!doValidate() || !doValidateValue()) {
             return;
         }
         try {
@@ -185,7 +185,8 @@ public class DetailUserGroupView extends AbstractDetailScreen {
         }
     }
 
-    private boolean doValidateRequired() {
+    @Override
+    protected boolean doValidate() {
         if (ValidationHelper.validateRequired(txtUsername) && ValidationHelper.validateRequired(txtName))
             return true;
 

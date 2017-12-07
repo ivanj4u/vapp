@@ -5,8 +5,9 @@
 package com.aribanilia.vaadin.view.user;
 
 import com.aribanilia.vaadin.container.TreeMenuContainer;
+import com.aribanilia.vaadin.entity.TblGroup;
 import com.aribanilia.vaadin.entity.TblMenu;
-import com.aribanilia.vaadin.entity.TblUserGroup;
+import com.aribanilia.vaadin.entity.TblPriviledge;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -38,15 +40,81 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
     private Button btnEdit;
     private TreeGrid<TreeMenuContainer> tree;
     private Hashtable<String, TreeMenuContainer> hMenu;
+    private List<TblMenu> listMenu;
     private TreeMenuContainer selectedItem;
     private Window wMenuContainerView;
     private DetailMenuContainerView menuContainerView;
+    private TblGroup pojoGroup;
 
     private static final Logger logger = LoggerFactory.getLogger(DetailPriviledgeView.class);
 
     @Override
     protected void doSave() {
+        try {
+            if (getMode() == Constants.APP_MODE.MODE_NEW) {
+                /**
+                 * Save Group
+                 * Save Priviledge
+                 */
+                pojoGroup = new TblGroup();
+                pojoGroup.setGroupId(new Long(txtGroupId.getValue()));
+                pojoGroup.setGroupName(txtGroupName.getValue());
+                servicesGroup.save(pojoGroup);
 
+                savePriviledge();
+
+                listener.onAfterAdded(pojoGroup);
+            } else {
+                /**
+                 * Edit Group
+                 * Hapus Priviledge
+                 * Save Priviledge
+                 */
+                pojoGroup.setGroupName(txtGroupName.getValue());
+                servicesGroup.update(pojoGroup);
+
+                servicesPriviledge.deletePriviledgeGroup(pojoGroup.getGroupId());
+
+                savePriviledge();
+
+                listener.onAfterUpdated(pojoGroup);
+            }
+            doReset();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void savePriviledge() throws Exception {
+        for (TreeMenuContainer menuContainer : hMenu.values()) {
+            if (!validateMenuContainer(menuContainer))
+                continue;
+
+            TblPriviledge priviledge = new TblPriviledge();
+            priviledge.setMenuId(menuContainer.getMenuId());
+            priviledge.setGroupId(pojoGroup.getGroupId());
+            priviledge.setIsAdd(menuContainer.getIsAdd().charAt(0));
+            priviledge.setIsUpdate(menuContainer.getIsUpdate().charAt(0));
+            priviledge.setIsView(menuContainer.getIsView().charAt(0));
+            priviledge.setIsDelete(menuContainer.getIsDelete().charAt(0));
+            servicesPriviledge.save(priviledge);
+        }
+    }
+
+    private boolean validateMenuContainer(TreeMenuContainer menuContainer) {
+        if (menuContainer.getIsAdd().equals("0")
+                && menuContainer.getIsUpdate().equals("0")
+                && menuContainer.getIsView().equals("0")
+                && menuContainer.getIsDelete().equals("0")) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean doValidate() {
+        return false;
     }
 
     @Override
@@ -54,17 +122,17 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
         txtGroupId.setValue("");
         txtGroupName.setValue("");
         selectedItem = null;
+        pojoGroup = null;
     }
 
     @Override
     protected void setContentById(Object pojo) {
         try {
-            TblUserGroup userGroup = pojo != null ? (TblUserGroup) pojo : null;
-            if (userGroup != null) {
-                txtGroupId.setValue(String.valueOf(userGroup.getGroupId()));
-                txtGroupName.setValue(userGroup.getUsername());
-
-
+            pojoGroup = pojo != null ? (TblGroup) pojo : null;
+            if (pojoGroup != null) {
+                txtGroupId.setValue(String.valueOf(pojoGroup.getGroupId()));
+                txtGroupName.setValue(pojoGroup.getGroupName());
+                createMenuData(false);
             } else {
                 NotificationHelper.showNotification(Constants.APP_MESSAGE.INFO_DATA_NOT_EXIST);
                 doCancel();
@@ -79,6 +147,7 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
     @Override
     protected void beforeInitComponent() {
         hMenu = new Hashtable<>();
+        listMenu = new ArrayList<>();
     }
 
     @Override
@@ -141,21 +210,12 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
                 menuContainerView = new DetailMenuContainerView(selectedItem, result -> {
                     getUI().removeWindow(wMenuContainerView);
                     TreeMenuContainer menuContainer = (TreeMenuContainer) result;
-                    /**
-                     * Remove old menu
-                     */
-                    TreeDataProvider<TreeMenuContainer> dataProvider = (TreeDataProvider<TreeMenuContainer>) tree.getDataProvider();
-                    TreeData<TreeMenuContainer> treeData = dataProvider.getTreeData();
-                    treeData.removeItem(hMenu.get(menuContainer.getMenuId()));
-                    /**
-                     * Put new menu
-                     */
                     hMenu.put(menuContainer.getMenuId(), menuContainer);
-                    treeData.addItem(menuContainer.getParentMenu(), menuContainer);
-                    dataProvider.refreshAll();
+                    createMenuData(true);
                 });
                 wMenuContainerView = new Window();
                 wMenuContainerView.setContent(menuContainerView);
+                menuContainerView.show();
                 wMenuContainerView.setModal(true);
                 wMenuContainerView.setWidth("55%");
                 wMenuContainerView.setHeight("45%");
@@ -170,11 +230,10 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
 
     @Override
     protected void afterInitComponent() {
-        createMenuData();
+        createTreeData();
     }
 
-    @SuppressWarnings("unchecked")
-    private void createMenuData() {
+    private void createTreeData() {
         tree.setWidth("100%");
         tree.addColumn(TreeMenuContainer::getMenuId).setCaption("Id Menu");
         tree.addColumn(TreeMenuContainer::getMenuName).setCaption("Nama Menu");
@@ -182,19 +241,29 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
         tree.addColumn(TreeMenuContainer::getIsUpdate).setCaption("Ubah");
         tree.addColumn(TreeMenuContainer::getIsView).setCaption("Lihat");
         tree.addColumn(TreeMenuContainer::getIsDelete).setCaption("Hapus");
+    }
 
+    @SuppressWarnings("unchecked")
+    private void createMenuData(boolean isEdited) {
         TreeDataProvider<TreeMenuContainer> dataProvider = (TreeDataProvider<TreeMenuContainer>) tree.getDataProvider();
         TreeData<TreeMenuContainer> treeData = dataProvider.getTreeData();
-
+        treeData.clear();
+        if (!isEdited) {
+            listMenu = servicesMenu.getAllMenu();
+            hMenu.clear();
+        }
         TreeMenuContainer menuContainer;
-        List<TblMenu> listMenu = servicesMenu.getAllMenu();
         for (TblMenu menu : listMenu) {
-            if (menu.getParentId().equals("0")) {
-                menuContainer = packContainer(menu, true);
+            if (isEdited) {
+                menuContainer = hMenu.get(menu.getMenuId());
             } else {
-                menuContainer = packContainer(menu, false);
+                if (menu.getParentId().equals("0")) {
+                    menuContainer = packContainer(menu, true);
+                } else {
+                    menuContainer = packContainer(menu, false);
+                }
+                hMenu.put(menu.getMenuId(), menuContainer);
             }
-            hMenu.put(menu.getMenuId(), menuContainer);
             treeData.addItem(menuContainer.getParentMenu(), menuContainer);
         }
         dataProvider.refreshAll();
@@ -204,11 +273,30 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
         TreeMenuContainer menuContainer = new TreeMenuContainer();
         menuContainer.setMenuId(menu.getMenuId());
         menuContainer.setMenuName(menu.getMenuName());
-        // Default value 0
-        menuContainer.setIsAdd("0");
-        menuContainer.setIsUpdate("0");
-        menuContainer.setIsView("0");
-        menuContainer.setIsDelete("0");
+        if (getMode() == Constants.APP_MODE.MODE_UPDATE || getMode() == Constants.APP_MODE.MODE_VIEW) {
+            try {
+                TblPriviledge priviledge = servicesPriviledge.getMenuPriviledge(menu.getMenuId(), pojoGroup.getGroupId());
+                if (priviledge != null) {
+                    menuContainer.setIsAdd(String.valueOf(priviledge.getIsAdd()));
+                    menuContainer.setIsUpdate(String.valueOf(priviledge.getIsUpdate()));
+                    menuContainer.setIsView(String.valueOf(priviledge.getIsView()));
+                    menuContainer.setIsDelete(String.valueOf(priviledge.getIsDelete()));
+                } else {
+                    menuContainer.setIsAdd("0");
+                    menuContainer.setIsUpdate("0");
+                    menuContainer.setIsView("0");
+                    menuContainer.setIsDelete("0");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error(e.getMessage());
+            }
+        } else {
+            menuContainer.setIsAdd("0");
+            menuContainer.setIsUpdate("0");
+            menuContainer.setIsView("0");
+            menuContainer.setIsDelete("0");
+        }
         if (isParent) {
             menuContainer.setParentMenu(null);
         } else {
@@ -220,6 +308,8 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
 
     @Override
     public void setModeNew() {
+        doReset();
+        createMenuData(false);
         txtGroupId.setEnabled(true);
         btnSave.setVisible(true);
     }

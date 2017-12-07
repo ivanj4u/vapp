@@ -49,6 +49,7 @@ public abstract class AbstractDetailScreen extends AbstractScreen {
     }
 
     protected abstract void doSave();
+    protected abstract boolean doValidate();
     protected abstract void doReset();
     protected abstract void setContentById(Object pojo);
 

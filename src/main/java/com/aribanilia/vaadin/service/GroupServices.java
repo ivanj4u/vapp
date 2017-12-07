@@ -2,8 +2,10 @@ package com.aribanilia.vaadin.service;
 
 import com.aribanilia.vaadin.dao.GroupDao;
 import com.aribanilia.vaadin.entity.TblGroup;
+import com.aribanilia.vaadin.util.ValidationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,18 @@ public class GroupServices extends AuditTrailServices {
         return group;
     }
 
+    public List<TblGroup> queryList(String groupId) {
+        List<TblGroup> list = new ArrayList<>();
+        if (ValidationHelper.validateValueNotNull(groupId)) {
+            TblGroup group = daoGroup.findOne(new Long(groupId));
+            if (group != null)
+                list.add(group);
+        } else {
+            list = daoGroup.findAll();
+        }
+        return list;
+    }
+
     public List<TblGroup> getAllGroup() {
         List<TblGroup> list = new ArrayList<>();
         try {
@@ -45,7 +59,7 @@ public class GroupServices extends AuditTrailServices {
     public void save(Object pojo) throws Exception {
         TblGroup group = (TblGroup) pojo;
         try {
-            super.save(group);
+            saveAudit(group);
             daoGroup.save(group);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,13 +69,12 @@ public class GroupServices extends AuditTrailServices {
 
     @Override
     public void update(Object pojo) throws Exception {
-        TblGroup group = (TblGroup) pojo;
+        TblGroup updatedGroup = (TblGroup) pojo;
         try {
-            TblGroup updatePojo = daoGroup.findOne(group.getGroupId());
-            updatePojo.setGroupName(group.getGroupName());
-            // Update Pojo AuditTrail
-            super.update(updatePojo);
-            daoGroup.save(updatePojo);
+            TblGroup group = daoGroup.findOne(updatedGroup.getGroupId());
+            BeanUtils.copyProperties(updatedGroup, group);
+            updateAudit(group);
+            daoGroup.save(group);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());

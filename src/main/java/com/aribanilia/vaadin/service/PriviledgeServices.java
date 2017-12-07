@@ -33,9 +33,32 @@ public class PriviledgeServices {
         return list;
     }
 
+    public TblPriviledge getMenuPriviledge(String menuId, Long groupId) throws Exception {
+        TblPriviledge priviledge = null;
+        try {
+            priviledge = daoPriviledge.findByMenuIdAndGroupId(menuId, groupId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        return priviledge;
+    }
+
     public void save(TblPriviledge priviledge) throws Exception {
         try {
             daoPriviledge.save(priviledge);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+    }
+
+    public void deletePriviledgeGroup(Long groupId) throws Exception {
+        try {
+            List<TblPriviledge> list = daoPriviledge.findByGroupId(groupId);
+            for (TblPriviledge priviledge : list) {
+                delete(priviledge);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());

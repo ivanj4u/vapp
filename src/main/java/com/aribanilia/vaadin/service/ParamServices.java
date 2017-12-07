@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class ParamServices {
+public class ParamServices extends AuditTrailServices {
     @Autowired private ParamDao daoParam;
 
     private static final Logger logger = LoggerFactory.getLogger(ParamServices.class);
@@ -44,4 +44,13 @@ public class ParamServices {
         return param;
     }
 
+    @Override
+    public void save(Object pojo) throws Exception {
+
+    }
+
+    @Override
+    public void update(Object pojo) throws Exception {
+
+    }
 }

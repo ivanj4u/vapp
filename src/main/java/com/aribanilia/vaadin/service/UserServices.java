@@ -9,6 +9,7 @@ import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.util.ValidationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class UserServices extends AuditTrailServices {
     public void save(Object pojo) throws Exception {
         TblUser createdUser = (TblUser) pojo;
         try {
-            super.save(createdUser);
+            saveAudit(createdUser);
             daoUser.save(createdUser);
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,18 +40,10 @@ public class UserServices extends AuditTrailServices {
     public void update(Object pojo) throws Exception {
         TblUser updatedUser = (TblUser) pojo;
         try {
-            TblUser tblUser = daoUser.findOne(updatedUser.getUsername());
-            tblUser.setName(updatedUser.getName());
-            tblUser.setPassword(updatedUser.getPassword());
-            tblUser.setEmail(updatedUser.getEmail());
-            tblUser.setPhone(updatedUser.getPhone());
-            tblUser.setStatus(updatedUser.getStatus());
-            tblUser.setLoginFailCount(updatedUser.getLoginFailCount());
-            tblUser.setStartTime(updatedUser.getStartTime());
-            tblUser.setEndTime(updatedUser.getEndTime());
-
-            super.update(updatedUser);
-            daoUser.save(tblUser);
+            TblUser user = daoUser.findOne(updatedUser.getUsername());
+            BeanUtils.copyProperties(updatedUser, user);
+            updateAudit(user);
+            daoUser.save(user);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());

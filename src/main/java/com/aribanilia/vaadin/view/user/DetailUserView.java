@@ -7,6 +7,7 @@ package com.aribanilia.vaadin.view.user;
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.framework.component.ItemComponent;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
+import com.aribanilia.vaadin.framework.component.PopUpComboBox;
 import com.aribanilia.vaadin.framework.component.PopUpDateField;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
@@ -20,8 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Hashtable;
-
 @SpringComponent
 @UIScope
 public class DetailUserView extends AbstractDetailScreen {
@@ -30,8 +29,7 @@ public class DetailUserView extends AbstractDetailScreen {
     private TextField txtUsername, txtName, txtEmail, txtPhone;
     private PasswordField txtPassword, txtPasswordConfirm;
     private PopUpDateField txtTglAwal, txtTglAkhir;
-    private ComboBox<ItemComponent> cmbStatus;
-    private Hashtable<Object, ItemComponent> hItem;
+    private PopUpComboBox cmbStatus;
     private TblUser pojoUser;
 
     private static final Logger logger = LoggerFactory.getLogger(DetailUserView.class);
@@ -82,7 +80,7 @@ public class DetailUserView extends AbstractDetailScreen {
         grid.addComponent(horizontalLayout, 1, row, 2, row++);
 
         grid.addComponent(new Label("Status"), 0, row);
-        grid.addComponent(cmbStatus = new ComboBox<>(), 1, row, 2, row++);
+        grid.addComponent(cmbStatus = new PopUpComboBox(), 1, row, 2, row++);
         createComboBoxData();
 
         layout.addComponent(grid);
@@ -91,14 +89,8 @@ public class DetailUserView extends AbstractDetailScreen {
     }
 
     private void createComboBoxData() {
-        /**
-         * Create Combobox Data
-         */
-        hItem = new Hashtable<>();
-        hItem.put("1", new ItemComponent("1", "Aktif"));
-        hItem.put("0", new ItemComponent("0", "Tidak Aktif"));
-        cmbStatus.setItems(hItem.values());
-        cmbStatus.setItemCaptionGenerator(ItemComponent::getCaption);
+        cmbStatus.addItem(new ItemComponent("1", "Aktif"));
+        cmbStatus.addItem(new ItemComponent("0", "Tidak Aktif"));
     }
 
     @Override
@@ -149,7 +141,7 @@ public class DetailUserView extends AbstractDetailScreen {
 
     @Override
     protected void doSave() {
-        if (!doValidateRequired() || !doValidateValue()) {
+        if (!doValidate() || !doValidateValue()) {
             return;
         }
         try {
@@ -168,7 +160,7 @@ public class DetailUserView extends AbstractDetailScreen {
             pojoUser.setStartTime(txtTglAwal.getValueDate());
             pojoUser.setEndTime(txtTglAkhir.getValueDate());
             pojoUser.setLoginFailCount(0);
-            pojoUser.setStatus(cmbStatus.getValue().getValue().toString());
+            pojoUser.setStatus(cmbStatus.getValueItem().toString());
 
             if (getMode() == Constants.APP_MODE.MODE_NEW) {
                 servicesUser.save(pojoUser);
@@ -185,7 +177,8 @@ public class DetailUserView extends AbstractDetailScreen {
         }
     }
 
-    private boolean doValidateRequired() {
+    @Override
+    protected boolean doValidate() {
         if (ValidationHelper.validateRequired(txtUsername) && ValidationHelper.validateRequired(txtName)
                 && ValidationHelper.validateRequired(txtEmail) && ValidationHelper.validateRequired(txtPhone)
                 && ValidationHelper.validateRequired(txtPassword) && ValidationHelper.validateRequired(txtPasswordConfirm)
@@ -246,7 +239,7 @@ public class DetailUserView extends AbstractDetailScreen {
                 txtPasswordConfirm.setValue(pojoUser.getPassword());
                 txtTglAwal.setValueDate(pojoUser.getStartTime());
                 txtTglAkhir.setValueDate(pojoUser.getEndTime());
-                cmbStatus.setSelectedItem(hItem.get(pojoUser.getStatus()));
+                cmbStatus.setValueItem(pojoUser.getStatus());
             } else {
                 NotificationHelper.showNotification(Constants.APP_MESSAGE.INFO_DATA_NOT_EXIST);
                 doCancel();

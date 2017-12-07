@@ -47,6 +47,10 @@ public class Constants {
         String MENU_ITEM_LOGOUT = "Keluar";
     }
 
+    public interface APP_USER {
+        String SYS_USER = "SYSTEM";
+    }
+
     public interface APP_MODE {
         int MODE_NEW = 0;
         int MODE_UPDATE = 1;

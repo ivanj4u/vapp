@@ -25,19 +25,20 @@ public class SessionServices {
     public void sessionLogin(String username, String sessionId, String ip) throws Exception {
         try {
             TblSession pojo = daoSession.findOne(username);
+            Date now = new Date();
             if (pojo == null) {
                 pojo = new TblSession();
                 pojo.setUsername(username);
-                // Audit Trail
                 pojo.setCreateBy(username);
-                pojo.setCreateDate(new Date());
+                pojo.setCreateDate(now);
+                pojo.setVersi(now.getTime());
             } else {
                 pojo.setUpdateBy(username);
-                pojo.setUpdateDate(new Date());
+                pojo.setUpdateDate(now);
+                pojo.setVersi(now.getTime());
             }
             pojo.setSessionId(sessionId);
             pojo.setIp(ip);
-            // Save or Update TblSession
             daoSession.save(pojo);
         } catch (Exception e) {
             e.printStackTrace();

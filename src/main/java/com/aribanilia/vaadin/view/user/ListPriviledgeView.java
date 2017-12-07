@@ -4,12 +4,12 @@
 
 package com.aribanilia.vaadin.view.user;
 
-import com.aribanilia.vaadin.entity.TblUserGroup;
+import com.aribanilia.vaadin.entity.TblGroup;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
 import com.aribanilia.vaadin.framework.impl.AbstractSearchScreen;
-import com.aribanilia.vaadin.service.UserGroupServices;
+import com.aribanilia.vaadin.service.GroupServices;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -28,13 +28,13 @@ import java.util.List;
 @UIScope
 @SpringView
 public class ListPriviledgeView extends AbstractSearchScreen implements View {
-    @Autowired private UserGroupServices servicesUserGroup;
+    @Autowired private GroupServices servicesGroup;
     @Autowired private ApplicationContext applicationContext;
 
     private TextField txtGroupId;
     private AbstractDetailScreen detailScreen;
-    private List<TblUserGroup> list;
-    private Grid<TblUserGroup> table;
+    private List<TblGroup> list;
+    private Grid<TblGroup> table;
 
     private final String GROUP_ID = "Id Group";
     private final String GROUP_NAME = "Nama Group";
@@ -76,8 +76,8 @@ public class ListPriviledgeView extends AbstractSearchScreen implements View {
 
     @Override
     protected void initTableData() {
-        table.addColumn(TblUserGroup::getGroupId).setCaption(GROUP_ID);
-        table.addColumn(TblUserGroup::getUsername).setCaption(GROUP_NAME);
+        table.addColumn(TblGroup::getGroupId).setCaption(GROUP_ID);
+        table.addColumn(TblGroup::getGroupName).setCaption(GROUP_NAME);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class ListPriviledgeView extends AbstractSearchScreen implements View {
     @Override
     protected void doSearch() {
         try {
-            list = servicesUserGroup.getUserGroupByGroupId(txtGroupId.getValue());
+            list = servicesGroup.queryList(txtGroupId.getValue());
             table.setItems(list);
         } catch (Exception e) {
             e.printStackTrace();

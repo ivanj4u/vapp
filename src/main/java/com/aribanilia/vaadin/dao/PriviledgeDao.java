@@ -14,4 +14,5 @@ public interface PriviledgeDao extends CrudRepository<TblPriviledge, TblPriviled
 
     List<TblPriviledge> findByGroupId(Long groupId);
 
+    TblPriviledge findByMenuIdAndGroupId(String menuId, Long groupId);
 }
