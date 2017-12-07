@@ -6,9 +6,9 @@ package com.aribanilia.vaadin.framework.page;
 
 import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.loader.MenuLoader;
-import com.aribanilia.vaadin.service.ParamServices;
-import com.aribanilia.vaadin.service.SessionServices;
-import com.aribanilia.vaadin.service.UserServices;
+import com.aribanilia.vaadin.services.ParamServices;
+import com.aribanilia.vaadin.services.SessionServices;
+import com.aribanilia.vaadin.services.UserServices;
 import com.aribanilia.vaadin.util.ValidationHelper;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;

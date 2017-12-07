@@ -11,9 +11,9 @@ import com.aribanilia.vaadin.entity.TblPriviledge;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
-import com.aribanilia.vaadin.service.GroupServices;
-import com.aribanilia.vaadin.service.MenuServices;
-import com.aribanilia.vaadin.service.PriviledgeServices;
+import com.aribanilia.vaadin.services.GroupServices;
+import com.aribanilia.vaadin.services.MenuServices;
+import com.aribanilia.vaadin.services.PriviledgeServices;
 import com.aribanilia.vaadin.util.ValidationHelper;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
@@ -205,7 +205,7 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
         }
         if (menuContainerView == null) {
             try {
-                menuContainerView = new DetailMenuContainerView(selectedItem, result -> {
+                menuContainerView = new DetailMenuContainerView(result -> {
                     getUI().removeWindow(wMenuContainerView);
                     TreeMenuContainer menuContainer = (TreeMenuContainer) result;
                     hMenu.put(menuContainer.getMenuId(), menuContainer);
@@ -223,6 +223,8 @@ public class DetailPriviledgeView extends AbstractDetailScreen {
                 logger.error(e.getMessage());
             }
         }
+        menuContainerView.setParam(selectedItem);
+        menuContainerView.unpack();
         getUI().addWindow(wMenuContainerView);
     }
 

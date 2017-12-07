@@ -22,10 +22,10 @@ public class DetailMenuContainerView extends AbstractScreen {
     private CallbackListener listener;
     private TreeMenuContainer menuContainer;
 
-    public DetailMenuContainerView(TreeMenuContainer menuContainer, CallbackListener listener) {
+    public DetailMenuContainerView(CallbackListener listener) {
         super();
         this.listener = listener;
-        this.menuContainer = menuContainer;
+        setCaption("Detail Priviledge");
     }
 
     @Override
@@ -33,11 +33,6 @@ public class DetailMenuContainerView extends AbstractScreen {
         VerticalLayout layout = new VerticalLayout();
         layout.addComponent(initDetail());
         setContent(layout);
-    }
-
-    @Override
-    protected void afterInitComponent() {
-        unpack();
     }
 
     private Component initDetail() {
@@ -91,7 +86,9 @@ public class DetailMenuContainerView extends AbstractScreen {
         }
     }
 
-    private void unpack() {
+    protected void unpack() {
+        this.menuContainer = (TreeMenuContainer) getParam();
+
         txtMenuId.setValue(menuContainer.getMenuId());
         txtMenuName.setValue(menuContainer.getMenuName());
         cmbAdd.setValueItem(menuContainer.getIsAdd());

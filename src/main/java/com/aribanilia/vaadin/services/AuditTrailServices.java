@@ -1,4 +1,4 @@
-package com.aribanilia.vaadin.service;
+package com.aribanilia.vaadin.services;
 
 import com.aribanilia.vaadin.entity.AuditTrail;
 import com.aribanilia.vaadin.entity.TblUser;

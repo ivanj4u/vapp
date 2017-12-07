@@ -8,7 +8,7 @@ import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.framework.component.MenuComponent;
 import com.aribanilia.vaadin.framework.impl.AbstractScreen;
 import com.aribanilia.vaadin.loader.MenuLoader;
-import com.aribanilia.vaadin.service.SessionServices;
+import com.aribanilia.vaadin.services.SessionServices;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinSession;

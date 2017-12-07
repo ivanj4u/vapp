@@ -2,7 +2,7 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vaadin.service;
+package com.aribanilia.vaadin.services;
 
 import com.aribanilia.vaadin.dao.PriviledgeDao;
 import com.aribanilia.vaadin.entity.TblPriviledge;

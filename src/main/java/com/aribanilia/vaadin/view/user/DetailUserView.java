@@ -11,7 +11,7 @@ import com.aribanilia.vaadin.framework.component.PopUpComboBox;
 import com.aribanilia.vaadin.framework.component.PopUpDateField;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
-import com.aribanilia.vaadin.service.UserServices;
+import com.aribanilia.vaadin.services.UserServices;
 import com.aribanilia.vaadin.util.ValidationHelper;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;

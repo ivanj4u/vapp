@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface ParamDao extends CrudRepository<TblParam, String> {
 
+    List<TblParam> queryTblParamsByKeyLike(String key);
+
     @Override
     List<TblParam> findAll();
 

@@ -2,14 +2,14 @@
  * Copyright (c) 2017.
  */
 
-package com.aribanilia.vaadin.view.user;
+package com.aribanilia.vaadin.view.param;
 
-import com.aribanilia.vaadin.entity.TblGroup;
+import com.aribanilia.vaadin.entity.TblParam;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
 import com.aribanilia.vaadin.framework.impl.AbstractSearchScreen;
-import com.aribanilia.vaadin.services.GroupServices;
+import com.aribanilia.vaadin.services.ParamServices;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -20,25 +20,25 @@ import com.vaadin.ui.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @UIScope
 @SpringView
-public class ListPriviledgeView extends AbstractSearchScreen implements View {
-    @Autowired private GroupServices servicesGroup;
-    @Autowired private ApplicationContext applicationContext;
+public class ListParamView extends AbstractSearchScreen implements View {
 
-    private TextField txtGroupId;
-    private AbstractDetailScreen detailScreen;
-    private List<TblGroup> list;
-    private Grid<TblGroup> table;
+    @Autowired private ParamServices servicesParam;
 
-    private final String GROUP_ID = "Id Group";
-    private final String GROUP_NAME = "Nama Group";
+    private TextField txtKey;
+    private Grid<TblParam> table;
+    private List<TblParam> list;
 
-    private static final Logger logger = LoggerFactory.getLogger(ListPriviledgeView.class);
+    private final String KEY_ = "Id Param";
+    private final String VALUE_ = "Nilai Param";
+    private final String DESC_ = "Deskripsi";
+
+    private static final Logger logger = LoggerFactory.getLogger(ListParamView.class);
 
     @Override
     protected int getGridColumn() {
@@ -47,16 +47,15 @@ public class ListPriviledgeView extends AbstractSearchScreen implements View {
 
     @Override
     protected int getGridRow() {
-        return 3;
+        return 2;
     }
 
     @Override
     protected void initGridComponent() {
-        Label lbl = new Label("Id Group");
+        Label lbl = new Label("Id Param");
         lbl.setWidth("110px");
-
         grid.addComponent(lbl, 0, row);
-        grid.addComponent(txtGroupId = new TextField(), 1, row++);
+        grid.addComponent(txtKey = new TextField(), 1, row++);
     }
 
     @Override
@@ -66,45 +65,37 @@ public class ListPriviledgeView extends AbstractSearchScreen implements View {
 
     @Override
     protected void initTableData() {
-        table = (Grid<TblGroup>) initTable();
-        table.addColumn(TblGroup::getGroupId).setCaption(GROUP_ID);
-        table.addColumn(TblGroup::getGroupName).setCaption(GROUP_NAME);
+        list = new ArrayList<>();
+        table = (Grid<TblParam>) initTable();
+        table.addColumn(TblParam::getKey).setCaption(KEY_);
+        table.addColumn(TblParam::getValue).setCaption(VALUE_);
+        table.addColumn(TblParam::getDescription).setCaption(DESC_);
     }
 
     @Override
     protected AbstractDetailScreen getDetailScreen() {
-        if (detailScreen == null) {
-            try {
-                detailScreen = applicationContext.getBean(DetailPriviledgeView.class);
-                detailScreen.setListener(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-                logger.error(e.getMessage());
-                NotificationHelper.showNotification(Constants.APP_MESSAGE.ERR_DATA_GET_DETAIL);
-            }
-        }
-        return detailScreen;
+        return null;
     }
 
     @Override
     protected String getDetailScreenTitle() {
-        return "Pengaturan Group";
+        return "Pengaturan Sys Param";
     }
 
     @Override
     protected String getDetailScreenWidth() {
-        return "60%";
+        return "50%";
     }
 
     @Override
     protected String getDetailScreenHeight() {
-        return "95%";
+        return "65%";
     }
 
     @Override
     protected void doSearch() {
         try {
-            list = servicesGroup.queryList(txtGroupId.getValue());
+            list = servicesParam.queryList(txtKey.getValue());
             table.setItems(list);
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,7 +106,8 @@ public class ListPriviledgeView extends AbstractSearchScreen implements View {
 
     @Override
     protected void doReset() {
-        txtGroupId.setValue("");
+        txtKey.setValue("");
+
         list.clear();
         table.setItems(list);
     }

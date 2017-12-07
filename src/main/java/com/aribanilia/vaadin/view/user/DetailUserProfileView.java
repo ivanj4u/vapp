@@ -8,7 +8,7 @@ import com.aribanilia.vaadin.entity.TblUser;
 import com.aribanilia.vaadin.framework.component.NotificationHelper;
 import com.aribanilia.vaadin.framework.constants.Constants;
 import com.aribanilia.vaadin.framework.impl.AbstractDetailScreen;
-import com.aribanilia.vaadin.service.UserServices;
+import com.aribanilia.vaadin.services.UserServices;
 import com.aribanilia.vaadin.util.ValidationHelper;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringComponent;
