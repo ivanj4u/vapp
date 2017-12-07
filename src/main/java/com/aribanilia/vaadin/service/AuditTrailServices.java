@@ -9,7 +9,7 @@ import java.util.Date;
 
 public abstract class AuditTrailServices {
 
-    public void saveAudit(Object pojo) throws Exception {
+    protected void saveAudit(Object pojo) throws Exception {
         TblUser user = VaadinSession.getCurrent().getAttribute(TblUser.class);
         Date now = new Date();
         if (user != null) {
@@ -21,7 +21,7 @@ public abstract class AuditTrailServices {
         ((AuditTrail) pojo).setVersi(now.getTime());
     }
 
-    public void updateAudit(Object pojo) throws Exception {
+    protected void updateAudit(Object pojo) throws Exception {
         TblUser user = VaadinSession.getCurrent().getAttribute(TblUser.class);
         Date now = new Date();
         if (user != null) {

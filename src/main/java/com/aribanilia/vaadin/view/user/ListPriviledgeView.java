@@ -42,15 +42,6 @@ public class ListPriviledgeView extends AbstractSearchScreen implements View {
     private static final Logger logger = LoggerFactory.getLogger(ListPriviledgeView.class);
 
     @Override
-    protected void beforeInitComponent() {
-        table = new Grid<>();
-        table.setWidth("100%");
-        table.addStyleName(ValoTheme.TABLE_COMPACT);
-        table.setSelectionMode(Grid.SelectionMode.SINGLE);
-        table.addItemClickListener(event -> setRowId(event.getItem()));
-    }
-
-    @Override
     protected int getGridColumn() {
         return 2;
     }
@@ -76,6 +67,7 @@ public class ListPriviledgeView extends AbstractSearchScreen implements View {
 
     @Override
     protected void initTableData() {
+        table = (Grid<TblGroup>) initTable();
         table.addColumn(TblGroup::getGroupId).setCaption(GROUP_ID);
         table.addColumn(TblGroup::getGroupName).setCaption(GROUP_NAME);
     }

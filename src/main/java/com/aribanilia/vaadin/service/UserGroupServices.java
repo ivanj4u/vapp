@@ -80,7 +80,7 @@ public class UserGroupServices {
         return list;
     }
 
-    public List<JoinUserGroup> getJoinUserGroup(String groupId, String username) throws Exception {
+    public List<JoinUserGroup> queryList(String groupId, String username) throws Exception {
         List<JoinUserGroup> list = new ArrayList<>();
         try {
             List<TblUserGroup> userGroups = getUserGroup(groupId, username);

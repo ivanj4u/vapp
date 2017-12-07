@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "tbl_menu", schema = "vaadin")
-public class TblMenu implements Serializable {
+public class TblMenu extends AuditTrail implements Serializable {
 
     @Id
     @Column(name = "menu_id", length = 100, nullable = false)

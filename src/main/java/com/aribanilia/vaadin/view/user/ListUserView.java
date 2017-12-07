@@ -47,15 +47,6 @@ public class ListUserView extends AbstractSearchScreen implements View {
     private static final Logger logger = LoggerFactory.getLogger(ListUserView.class);
 
     @Override
-    protected void beforeInitComponent() {
-        table = new Grid<>();
-        table.setWidth("100%");
-        table.addStyleName(ValoTheme.TABLE_COMPACT);
-        table.setSelectionMode(Grid.SelectionMode.SINGLE);
-        table.addItemClickListener(event -> setRowId(event.getItem()));
-    }
-
-    @Override
     protected int getGridColumn() {
         return 2;
     }
@@ -82,6 +73,8 @@ public class ListUserView extends AbstractSearchScreen implements View {
 
     @Override
     protected void initTableData() {
+        list = new ArrayList<>();
+        table = (Grid<TblUser>) initTable();
         table.addColumn(TblUser::getUsername).setCaption(USERNAME);
         table.addColumn(TblUser::getName).setCaption(NAME);
         table.addColumn(TblUser::getEmail).setCaption(EMAIL);

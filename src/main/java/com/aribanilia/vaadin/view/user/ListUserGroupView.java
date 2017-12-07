@@ -17,7 +17,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,15 +57,6 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
     }
 
     @Override
-    protected void beforeInitComponent() {
-        table = new Grid<>();
-        table.setWidth("100%");
-        table.addStyleName(ValoTheme.TABLE_COMPACT);
-        table.setSelectionMode(Grid.SelectionMode.SINGLE);
-        table.addItemClickListener(event -> setRowId(event.getItem()));
-    }
-
-    @Override
     protected void initGridComponent() {
         Label lbl = new Label("Id Group");
         lbl.setWidth("100px");
@@ -83,6 +73,8 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
 
     @Override
     protected void initTableData() {
+        list = new ArrayList<>();
+        table = (Grid<JoinUserGroup>) initTable();
         table.addColumn(JoinUserGroup::getGroup_groupId).setCaption(GROUP_ID);
         table.addColumn(JoinUserGroup::getGroup_groupName).setCaption(GROUP_NAME);
         table.addColumn(JoinUserGroup::getUser_username).setCaption(USERNAME);
@@ -122,7 +114,7 @@ public class ListUserGroupView extends AbstractSearchScreen implements View {
     @Override
     protected void doSearch() {
         try {
-            list = servicesUserGroup.getJoinUserGroup(txtGroupId.getValue(), txtUsername.getValue());
+            list = servicesUserGroup.queryList(txtGroupId.getValue(), txtUsername.getValue());
             table.setItems(list);
         } catch (Exception e) {
             e.printStackTrace();

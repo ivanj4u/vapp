@@ -26,10 +26,10 @@ public class UserServices extends AuditTrailServices {
 
     @Override
     public void save(Object pojo) throws Exception {
-        TblUser createdUser = (TblUser) pojo;
+        TblUser menu = (TblUser) pojo;
         try {
-            saveAudit(createdUser);
-            daoUser.save(createdUser);
+            saveAudit(menu);
+            daoUser.save(menu);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());

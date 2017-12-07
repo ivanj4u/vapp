@@ -39,7 +39,7 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
         layout.addStyleName(ValoTheme.PANEL_WELL);
 
         layout.addComponent(initPencarian());
-        layout.addComponent(initTable());
+        layout.addComponent(initResult());
 
         setContent(layout);
         Responsive.makeResponsive(this);
@@ -86,7 +86,7 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
         return panel;
     }
 
-    protected Panel initTable() {
+    protected Panel initResult() {
         Panel panel = new Panel("Hasil Pencarian");
         panel.addStyleName(ValoTheme.PANEL_WELL);
         panel.setSizeFull();
@@ -109,6 +109,16 @@ public abstract class AbstractSearchScreen extends AbstractScreen implements Det
 
         panel.setContent(layout);
         return panel;
+    }
+
+    protected Grid<?> initTable() {
+        Grid<?> table = new Grid<>();
+        table.setSizeFull();
+        table.addStyleName(ValoTheme.TABLE_BORDERLESS);
+        table.setSelectionMode(Grid.SelectionMode.SINGLE);
+        table.addItemClickListener(event -> setRowId(event.getItem()));
+
+        return table;
     }
 
     protected void initTotalDetail() {

@@ -35,7 +35,10 @@ public class PopUpComboBox extends ComboBox<ItemComponent> {
 
     public Object getValueItem() {
         ItemComponent itemComponent = getValue();
-        return itemComponent.getValue();
+        if (itemComponent != null) {
+            return itemComponent.getValue();
+        }
+        return null;
     }
 
     @Override

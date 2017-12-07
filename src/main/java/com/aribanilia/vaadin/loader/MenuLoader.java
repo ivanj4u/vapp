@@ -82,7 +82,7 @@ public class MenuLoader {
                     } else {
                         hSessionedMenuperUser.put(p.getMenuId(), p);
                         TblMenu menu = servicesMenu.getMenu(p.getMenuId());
-                        if (menu != null && menu.getMenuClass() != null) {
+                        if (menu != null && menu.getMenuClass() != null && !menu.getMenuClass().equals("")) {
                             hSessionedMenuperUser2.put(menu.getMenuClass(), p);
                         }
                         vTemp.add(menu);
